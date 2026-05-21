@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import {
   FiMail, FiClock, FiCheckSquare, FiCamera,
   FiHelpCircle, FiRefreshCw, FiEdit3, FiAward, FiMessageCircle,
@@ -146,11 +149,20 @@ function ActivityCard({ a, hasPartner }) {
 }
 
 export default function Dashboard() {
-  const { userProfile, partnerProfile, isLocal } = useAuth();
+  const { currentUser, userProfile, partnerProfile, isLocal } = useAuth();
   const days = userProfile?.relationshipStart
     ? Math.floor((Date.now() - new Date(userProfile.relationshipStart)) / 86400000) : null;
   const hasPartner = isLocal || !!userProfile?.partnerId;
   const quote = QUOTES[new Date().getDay() % QUOTES.length];
+  const coupleId = currentUser && userProfile?.partnerId
+    ? [currentUser.uid, userProfile.partnerId].sort().join('_') : null;
+
+  const [memories, setMemories] = useState([]);
+  useEffect(() => {
+    if (!coupleId) return;
+    const q = query(collection(db, 'couples', coupleId, 'memories'), orderBy('createdAt','desc'), limit(6));
+    return onSnapshot(q, snap => setMemories(snap.docs.map(d => ({ id:d.id, ...d.data() }))));
+  }, [coupleId]);
 
   return (
     <div className="min-h-screen" style={{background:'#fafafa'}}>
@@ -237,6 +249,34 @@ export default function Dashboard() {
               {ACTIVITIES.map(a => <ActivityCard key={a.id} a={a} hasPartner={hasPartner}/>)}
             </div>
           </div>
+
+          {/* ── Memories preview ── */}
+          {memories.length > 0 && (
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-bold text-gray-600 text-sm">ความทรงจำล่าสุด</p>
+                <Link to="/activity/memory-wall"
+                  className="text-xs font-bold"
+                  style={{color:'#14b8a6'}}>ดูทั้งหมด →</Link>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {memories.map(m => (
+                  <Link key={m.id} to="/activity/memory-wall"
+                    className="rounded-2xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-md"
+                    style={{background:m.bg||'#fff1f3', border:`1px solid ${m.border||'#fda4af'}`}}>
+                    {m.imageUrl ? (
+                      <img src={m.imageUrl} alt="" className="w-full aspect-square object-cover"/>
+                    ) : (
+                      <div className="aspect-square flex flex-col items-center justify-center p-3">
+                        <div className="text-2xl mb-1">{m.emoji}</div>
+                        <p className="text-xs font-bold text-gray-700 text-center leading-tight line-clamp-2">{m.title}</p>
+                      </div>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className="text-center mt-8 font-display italic text-xs" style={{color:'#d1b3c0'}}>
             Made with 💕 for you two
