@@ -37,7 +37,7 @@ function ActivityCard({ a, hasPartner }) {
   const content = (
     <div className="card card-hover group overflow-hidden h-full flex flex-col">
       {/* Icon area with gradient bg */}
-      <div className="relative flex items-center justify-center py-8 overflow-hidden"
+      <div className="relative flex items-center justify-center py-6 overflow-hidden"
         style={{background:`linear-gradient(135deg,${a.from}15,${a.to}28)`}}>
         <div className="absolute inset-0 opacity-15"
           style={{background:`radial-gradient(circle at 50% 70%,${a.to},transparent 65%)`}}/>
@@ -66,11 +66,11 @@ function ActivityCard({ a, hasPartner }) {
       <div className="h-[3px]" style={{background:`linear-gradient(90deg,${a.from},${a.to})`}}/>
 
       {/* Text */}
-      <div className="p-4 flex-1 flex flex-col justify-center">
-        <h3 className="font-bold text-slate-800 leading-snug mb-1" style={{fontSize:'0.95rem'}}>
+      <div className="p-4 flex-1 flex flex-col items-center justify-center text-center">
+        <h3 className="font-bold text-slate-800 leading-snug mb-1" style={{fontSize:'0.9rem'}}>
           {a.title}
         </h3>
-        <p className="text-slate-400 leading-snug" style={{fontSize:'0.8rem'}}>
+        <p className="text-slate-400 leading-snug" style={{fontSize:'0.78rem'}}>
           {a.desc}
         </p>
       </div>
@@ -89,25 +89,26 @@ function PartnerSection({ partnerProfile, userProfile, isLocal }) {
   if (!partnerProfile) {
     return (
       <Link to="/find-partner"
-        className="flex items-center gap-4 p-5 rounded-3xl mb-6 transition-all hover:scale-[1.01] active:scale-[0.99]"
+        className="flex items-center gap-4 p-5 rounded-2xl mb-6 transition-all hover:scale-[1.01] active:scale-[0.99]"
         style={{
-          background:'linear-gradient(135deg,rgba(232,99,122,.08),rgba(29,160,188,.08))',
-          border:'2px dashed rgba(232,99,122,.35)',
+          background:'linear-gradient(135deg,rgba(232,99,122,.06),rgba(29,160,188,.06))',
+          border:'1.5px solid rgba(232,99,122,.25)',
+          boxShadow:'0 4px 20px rgba(232,99,122,.08)',
         }}>
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-          style={{background:'rgba(232,99,122,.1)'}}>
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
+          style={{background:'linear-gradient(135deg,rgba(232,99,122,.15),rgba(232,99,122,.08))'}}>
           💕
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-slate-700" style={{fontSize:'1rem'}}>
+          <p className="font-bold text-slate-700" style={{fontSize:'0.95rem'}}>
             เชื่อมต่อกับคู่รักของคุณ
           </p>
-          <p className="text-slate-400 mt-0.5" style={{fontSize:'0.85rem'}}>
+          <p className="text-slate-400 mt-0.5" style={{fontSize:'0.82rem'}}>
             ค้นหาและเชื่อมต่อเพื่อทำกิจกรรมร่วมกัน
           </p>
         </div>
-        <div className="flex-shrink-0 px-4 py-2 rounded-2xl text-white font-bold text-sm"
-          style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)'}}>
+        <div className="flex-shrink-0 px-5 py-2.5 rounded-2xl text-white font-bold text-sm"
+          style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)',boxShadow:'0 4px 12px rgba(232,99,122,.3)'}}>
           เชื่อมต่อ
         </div>
       </Link>
@@ -187,7 +188,7 @@ export default function Dashboard() {
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{height:32,background:'var(--bg)',clipPath:'ellipse(55% 100% at 50% 100%)'}}/>
 
-        <div className="max-w-5xl mx-auto relative z-10">
+        <div className="max-w-xl mx-auto relative z-10">
           <div className="flex items-center justify-between gap-4">
             {/* User info */}
             <div className="flex items-center gap-3 min-w-0">
@@ -235,7 +236,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Content ── */}
-      <div className="max-w-5xl mx-auto px-4 -mt-5 pb-32 md:pb-12">
+      <div className="max-w-5xl mx-auto px-5 -mt-5 pb-32 md:pb-12">
 
         {/* Partner section */}
         <PartnerSection
@@ -245,7 +246,7 @@ export default function Dashboard() {
         />
 
         {/* Section title */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 mt-2">
           <h2 className="font-bold text-slate-700" style={{fontSize:'1.1rem'}}>
             กิจกรรมของเรา
           </h2>
