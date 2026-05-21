@@ -188,50 +188,83 @@ export default function Dashboard() {
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none"
           style={{height:32,background:'var(--bg)',clipPath:'ellipse(55% 100% at 50% 100%)'}}/>
 
-        <div className="max-w-xl mx-auto relative z-10">
-          <div className="flex items-center justify-between gap-4">
-            {/* User info */}
-            <div className="flex items-center gap-3 min-w-0">
+        <div className="max-w-sm mx-auto relative z-10">
+
+          {/* ── 3-column symmetric: Me | Days | Partner ── */}
+          <div className="grid grid-cols-3 items-center gap-3">
+
+            {/* Left — Me */}
+            <div className="flex flex-col items-center gap-2">
               {userProfile?.photoURL ? (
                 <img src={userProfile.photoURL} alt=""
-                  className="w-14 h-14 rounded-full object-cover flex-shrink-0"
-                  style={{boxShadow:'0 0 0 3px rgba(255,255,255,.4)'}}/>
+                  className="w-14 h-14 rounded-full object-cover"
+                  style={{boxShadow:'0 0 0 3px rgba(255,255,255,.45)'}}/>
               ) : (
-                <div className="w-14 h-14 rounded-full flex items-center justify-center text-3xl flex-shrink-0"
-                  style={{background:'rgba(255,255,255,.2)',boxShadow:'0 0 0 3px rgba(255,255,255,.3)'}}>
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
+                  style={{background:'rgba(255,255,255,.2)',boxShadow:'0 0 0 3px rgba(255,255,255,.35)'}}>
                   {userProfile?.avatarEmoji || '💕'}
                 </div>
               )}
-              <div className="min-w-0">
-                <p className="text-white/60 font-bold uppercase tracking-widest" style={{fontSize:'0.7rem'}}>
-                  ยินดีต้อนรับ
-                </p>
-                <h1 className="font-bold text-white truncate"
-                  style={{fontSize:'1.6rem',lineHeight:1.15,letterSpacing:'-0.5px'}}>
+              <div className="text-center">
+                <p className="text-white/50 font-bold uppercase tracking-wider" style={{fontSize:'0.55rem'}}>ฉัน</p>
+                <p className="font-bold text-white leading-tight" style={{fontSize:'0.78rem',maxWidth:80,wordBreak:'break-word'}}>
                   {userProfile?.displayName || 'ที่รัก'}
-                </h1>
-                <p className="font-display italic text-white/65 mt-1 truncate"
-                  style={{fontSize:'0.9rem'}}>
-                  "{quote}"
                 </p>
               </div>
             </div>
 
-            {/* Days counter */}
-            {days !== null && days >= 0 && (
-              <div className="flex-shrink-0 text-center px-5 py-3 rounded-2xl"
+            {/* Center — Days */}
+            <div className="flex flex-col items-center">
+              <div className="text-center px-3 py-3 rounded-2xl w-full"
                 style={{background:'rgba(255,255,255,.18)',backdropFilter:'blur(12px)'}}>
-                <p className="text-white/60 font-bold uppercase tracking-wider" style={{fontSize:'0.62rem'}}>
-                  อยู่ด้วยกัน
+                <p className="text-white/65 font-bold uppercase tracking-wider" style={{fontSize:'0.55rem'}}>อยู่ด้วยกัน</p>
+                <p className="font-black text-white leading-none my-0.5"
+                  style={{fontSize:'2.6rem',fontFamily:"'Nunito',sans-serif"}}>
+                  {days !== null && days >= 0 ? days : '—'}
                 </p>
-                <p className="font-black text-white leading-none"
-                  style={{fontSize:'2.8rem',fontFamily:"'Nunito',sans-serif"}}>
-                  {days}
-                </p>
-                <p className="text-white/60 font-bold" style={{fontSize:'0.72rem'}}>วัน</p>
+                <p className="text-white/65 font-bold" style={{fontSize:'0.65rem'}}>วัน</p>
+              </div>
+            </div>
+
+            {/* Right — Partner */}
+            {partnerProfile ? (
+              <div className="flex flex-col items-center gap-2">
+                {partnerProfile.photoURL ? (
+                  <img src={partnerProfile.photoURL} alt=""
+                    className="w-14 h-14 rounded-full object-cover"
+                    style={{boxShadow:'0 0 0 3px rgba(255,255,255,.45)'}}/>
+                ) : (
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
+                    style={{background:'rgba(255,255,255,.2)',boxShadow:'0 0 0 3px rgba(255,255,255,.35)'}}>
+                    {partnerProfile.avatarEmoji || '💕'}
+                  </div>
+                )}
+                <div className="text-center">
+                  <p className="text-white/50 font-bold uppercase tracking-wider" style={{fontSize:'0.55rem'}}>คู่รัก</p>
+                  <p className="font-bold text-white leading-tight" style={{fontSize:'0.78rem',maxWidth:80,wordBreak:'break-word'}}>
+                    {partnerProfile.displayName}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl"
+                  style={{background:'rgba(255,255,255,.08)',border:'2px dashed rgba(255,255,255,.35)'}}>
+                  💕
+                </div>
+                <div className="text-center">
+                  <p className="text-white/40 font-bold uppercase tracking-wider" style={{fontSize:'0.55rem'}}>คู่รัก</p>
+                  <p className="text-white/40 font-semibold" style={{fontSize:'0.72rem'}}>ยังไม่มี</p>
+                </div>
               </div>
             )}
           </div>
+
+          {/* Quote */}
+          <p className="font-display italic text-white/60 mt-5 text-center"
+            style={{fontSize:'0.86rem'}}>
+            "{quote}"
+          </p>
         </div>
       </div>
 
@@ -239,14 +272,16 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto px-5 -mt-5 pb-32 md:pb-12">
 
         {/* Partner section */}
-        <PartnerSection
-          partnerProfile={partnerProfile}
-          userProfile={userProfile}
-          isLocal={isLocal}
-        />
+        <div className="max-w-2xl mx-auto md:max-w-none">
+          <PartnerSection
+            partnerProfile={partnerProfile}
+            userProfile={userProfile}
+            isLocal={isLocal}
+          />
+        </div>
 
         {/* Section title */}
-        <div className="flex items-center justify-between mb-4 mt-2">
+        <div className="flex items-center justify-between mb-4 mt-2 max-w-2xl mx-auto md:max-w-none">
           <h2 className="font-bold text-slate-700" style={{fontSize:'1.1rem'}}>
             กิจกรรมของเรา
           </h2>
@@ -256,7 +291,7 @@ export default function Dashboard() {
         </div>
 
         {/* 2×4 Grid */}
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 max-w-2xl mx-auto md:max-w-none">
           {ACTIVITIES.map(a => (
             <ActivityCard key={a.id} a={a} hasPartner={hasPartner}/>
           ))}
