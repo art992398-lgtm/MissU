@@ -8,6 +8,8 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   color: #1a2a35;
+  font-size: 16px;
+  line-height: 1.5;
 }
 #root { min-height: 100vh; }
 
