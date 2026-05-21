@@ -6,7 +6,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 import { db } from '../firebase/config';
 import {
   FiMail, FiClock, FiCheckSquare, FiCamera,
-  FiHelpCircle, FiRefreshCw, FiEdit3, FiAward, FiMessageCircle,
+  FiHelpCircle, FiRefreshCw, FiEdit3, FiAward, FiMessageCircle, FiZap,
 } from 'react-icons/fi';
 
 const ACTIVITIES = [
@@ -70,7 +70,15 @@ function CoupleSidebar({ userProfile, partnerProfile, isLocal, days, quote }) {
                   {days !== null && days >= 0 ? days : '—'}
                 </div>
                 <div className="text-xs font-bold text-gray-400 mt-1">วันที่อยู่ด้วยกัน</div>
-                <div className="animate-heartbeat text-xl mt-2">💕</div>
+                <div className="flex items-center gap-2 mt-2 justify-center">
+                    <div className="animate-heartbeat text-xl">💕</div>
+                    {userProfile?.streakCount > 0 && (
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{background:'#fff7ed'}}>
+                        <span style={{fontSize:'0.85rem'}}>🔥</span>
+                        <span className="text-xs font-black" style={{color:'#ea580c'}}>{userProfile.streakCount}</span>
+                      </div>
+                    )}
+                  </div>
               </div>
               <AvatarBubble profile={partnerProfile} label="คู่รัก" ringFrom="#1da0bc" ringTo="#6366f1" size={20}/>
             </div>
@@ -219,7 +227,12 @@ export default function Dashboard() {
                     {days !== null && days >= 0 ? days : '—'}
                   </div>
                   <div className="text-xs font-bold text-gray-400 mt-1">วันที่อยู่ด้วยกัน</div>
-                  <div className="animate-heartbeat text-base mt-1.5">💕</div>
+                  {userProfile?.streakCount > 0 && (
+                    <div className="flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full" style={{background:'#fff7ed'}}>
+                      <span style={{fontSize:'0.9rem'}}>🔥</span>
+                      <span className="text-xs font-black" style={{color:'#ea580c'}}>{userProfile.streakCount}</span>
+                    </div>
+                  )}
                 </Link>
                 <Link to={`/profile/${userProfile?.partnerId}`}>
                   <AvatarBubble profile={partnerProfile} label="คู่รัก" ringFrom="#1da0bc" ringTo="#6366f1"/>
