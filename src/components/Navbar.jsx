@@ -6,50 +6,38 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  async function handleLogout() {
-    await logout();
-    navigate('/');
-  }
+  async function handleLogout() { await logout(); navigate('/'); }
+
+  const active = location.pathname;
 
   return (
-    <nav className="sticky top-0 z-50 glass-white shadow-sm"
-      style={{ borderBottom:'1px solid rgba(244,63,94,0.1)' }}>
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-
+    <nav className="glass-white sticky top-0 z-50">
+      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link to="/dashboard" className="flex items-center gap-2 group">
-          <span className="text-2xl group-hover:animate-heartbeat">💕</span>
+          <span className="text-xl group-hover:animate-heartbeat">💕</span>
           <span className="font-display font-bold text-xl text-gradient">MissU</span>
         </Link>
 
         {currentUser && (
-          <div className="flex items-center gap-1 sm:gap-3">
-            {[
-              { to:'/dashboard', label:'หน้าหลัก' },
-              { to:'/profile',   label:'โปรไฟล์' },
-            ].map(({ to, label }) => (
+          <div className="flex items-center gap-1">
+            {[{to:'/dashboard',label:'หน้าหลัก'},{to:'/profile',label:'โปรไฟล์'}].map(({to,label})=>(
               <Link key={to} to={to}
-                className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-all ${
-                  location.pathname === to
-                    ? 'text-white'
-                    : 'text-gray-500 hover:text-rose-500'
-                }`}
-                style={location.pathname === to
-                  ? { background:'linear-gradient(135deg,#f43f5e,#ec4899)', boxShadow:'0 2px 12px rgba(244,63,94,0.3)' }
-                  : {}}>
+                className={`px-3.5 py-1.5 rounded-xl text-sm font-semibold transition-all ${active===to?'text-rose-500':'text-slate-400 hover:text-slate-700'}`}
+                style={active===to?{background:'#fff1f3'}:{}}>
                 {label}
               </Link>
             ))}
-
-            <div className="flex items-center gap-2 ml-1 pl-3"
-              style={{ borderLeft:'1px solid rgba(244,63,94,0.15)' }}>
-              <span className="text-xl">{userProfile?.avatarEmoji || '💕'}</span>
-              <span className="text-sm font-semibold text-gray-600 hidden sm:block max-w-[80px] truncate">
+            <div className="w-px h-5 mx-2" style={{background:'rgba(244,63,94,.15)'}}/>
+            <div className="flex items-center gap-2">
+              {userProfile?.photoURL ? (
+                <img src={userProfile.photoURL} alt="" className="w-7 h-7 rounded-full object-cover avatar-ring"/>
+              ) : (
+                <span className="text-xl">{userProfile?.avatarEmoji||'💕'}</span>
+              )}
+              <span className="text-sm font-semibold text-slate-600 hidden sm:block max-w-[90px] truncate">
                 {userProfile?.displayName}
               </span>
-              <button onClick={handleLogout}
-                className="text-xs text-gray-300 hover:text-rose-400 transition-colors font-medium ml-1">
-                ออก
-              </button>
+              <button onClick={handleLogout} className="btn-ghost text-xs">ออก</button>
             </div>
           </div>
         )}
