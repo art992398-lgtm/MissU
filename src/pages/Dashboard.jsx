@@ -135,8 +135,8 @@ export default function Dashboard() {
           </Link>
         ) : null}
 
-        {/* ── Story highlight circles ── */}
-        <div className="bg-white rounded-3xl p-4 mb-5"
+        {/* ── Story highlight circles (mobile only) ── */}
+        <div className="md:hidden bg-white rounded-3xl p-4 mb-5"
           style={{boxShadow:'0 2px 16px rgba(0,0,0,0.05)', border:'1px solid #f5f5f5'}}>
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-1">กิจกรรมของเรา</p>
           <div className="flex gap-5 overflow-x-auto pb-1 hide-scrollbar">
@@ -146,7 +146,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* ── Activity grid (desktop 4-col, mobile 2-col) ── */}
+        {/* ── Activity grid (desktop only) ── */}
         <div className="hidden md:grid grid-cols-4 gap-3">
           {ACTIVITIES.map(a => {
             const { Icon } = a;
