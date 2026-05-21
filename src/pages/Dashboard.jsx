@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import { MissUIcon } from '../components/MissULogo';
 
 const ACTIVITIES = [
   { id:'love-letters', emoji:'💌', title:'จดหมายรัก',       desc:'เขียนความรู้สึกให้กัน',     from:'#f43f5e', to:'#ec4899' },
@@ -82,12 +83,16 @@ export default function Dashboard() {
   const hasPartner = isLocal || !!userProfile?.partnerId;
 
   return (
-    <div className="min-h-screen" style={{background:'#f8f5f7'}}>
+    <div className="min-h-screen" style={{background:'var(--bg)'}}>
       <Navbar/>
 
       {/* Hero */}
       <div className="page-hero">
         <div className="max-w-5xl mx-auto relative z-10">
+          {/* Subtle icon watermark */}
+          <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
+            <MissUIcon size={100}/>
+          </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -98,7 +103,7 @@ export default function Dashboard() {
                 )}
                 <div>
                   <p className="text-white/50 text-xs font-bold uppercase tracking-widest">ยินดีต้อนรับ</p>
-                  <h1 className="font-display font-bold text-white" style={{fontSize:'1.75rem',lineHeight:1.1}}>
+                  <h1 className="font-bold text-white" style={{fontFamily:"'Nunito',sans-serif",fontSize:'1.75rem',lineHeight:1.1,letterSpacing:'-0.5px'}}>
                     {userProfile?.displayName||'ที่รัก'}
                   </h1>
                 </div>
@@ -108,7 +113,7 @@ export default function Dashboard() {
             {days !== null && days >= 0 && (
               <div className="glass rounded-2xl px-6 py-3 text-center min-w-[110px] flex-shrink-0">
                 <p className="text-white/50 text-xs font-bold uppercase tracking-wider mb-0.5">อยู่ด้วยกัน</p>
-                <p className="font-display font-bold text-white leading-none" style={{fontSize:'2.75rem'}}>{days}</p>
+                <p className="font-bold text-white leading-none" style={{fontFamily:"'Nunito',sans-serif",fontSize:'2.75rem'}}>{days}</p>
                 <p className="text-white/50 text-xs font-semibold mt-0.5">วัน</p>
               </div>
             )}
