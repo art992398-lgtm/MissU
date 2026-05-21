@@ -29,10 +29,19 @@ export default function ModalPage({ title, subtitle, from, to, bg, children, act
           overflow: 'hidden',
         }}
       >
+        {/* Drag handle */}
+        <div style={{
+          background: `linear-gradient(135deg,${from},${to})`,
+          paddingTop: 10, paddingBottom: 0, flexShrink: 0,
+          display: 'flex', justifyContent: 'center',
+        }}>
+          <div style={{ width: 40, height: 4, borderRadius: 99, background: 'rgba(255,255,255,0.45)' }} />
+        </div>
+
         {/* Header */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '20px 20px 16px',
+          padding: '14px 20px 18px',
           background: `linear-gradient(135deg,${from},${to})`,
           flexShrink: 0,
         }}>

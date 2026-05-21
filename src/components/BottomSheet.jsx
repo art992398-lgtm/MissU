@@ -52,6 +52,11 @@ export default function BottomSheet({ show, onClose, title, children }) {
           transition: 'transform 0.2s ease',
         }}
       >
+        {/* Drag handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16, marginTop: -4 }}>
+          <div style={{ width: 40, height: 4, borderRadius: 99, background: '#e5e7eb' }} />
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>{title}</h3>
           <button

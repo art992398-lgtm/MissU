@@ -220,48 +220,54 @@ export default function Dashboard() {
           {/* ── Mobile: couple header ── */}
           <div className="md:hidden">
             {(hasPartner && (partnerProfile || isLocal)) ? (
-              <div className="bg-white rounded-3xl p-5 mb-5 text-center"
-                style={{boxShadow:'0 4px 20px rgba(0,0,0,0.07)'}}>
-                {/* Avatars row */}
-                <div className="flex items-center justify-between mb-3">
-                  <AvatarBubble profile={userProfile} label="ฉัน" ringFrom="#e8637a" ringTo="#f472b6"/>
-                  <div className="flex flex-col items-center flex-1">
-                    <div className="font-black leading-none text-gradient"
-                      style={{fontSize:'clamp(3rem,10vw,3.5rem)', fontFamily:"'Nunito',sans-serif"}}>
-                      {days !== null && days >= 0 ? days : '—'}
+              <div className="rounded-3xl mb-5 overflow-hidden"
+                style={{boxShadow:'0 8px 32px rgba(232,99,122,0.18)'}}>
+                {/* Gradient top section */}
+                <div className="relative px-5 pt-6 pb-8 text-center"
+                  style={{background:'linear-gradient(135deg,#f43f5e,#c026d3,#7c3aed)'}}>
+                  {/* Decorative circles */}
+                  <div style={{position:'absolute',top:-20,right:-20,width:100,height:100,borderRadius:'50%',background:'rgba(255,255,255,0.07)'}}/>
+                  <div style={{position:'absolute',bottom:-30,left:-10,width:80,height:80,borderRadius:'50%',background:'rgba(255,255,255,0.05)'}}/>
+                  {/* Avatars */}
+                  <div className="flex items-center justify-between">
+                    <AvatarBubble profile={userProfile} label="ฉัน" ringFrom="#fff" ringTo="#fce7f3" size={15}/>
+                    <div className="flex flex-col items-center flex-1">
+                      <div className="font-black leading-none text-white"
+                        style={{fontSize:'clamp(3rem,10vw,3.5rem)', fontFamily:"'Nunito',sans-serif", textShadow:'0 2px 12px rgba(0,0,0,0.2)'}}>
+                        {days !== null && days >= 0 ? days : '—'}
+                      </div>
+                      <div className="text-xs font-bold mt-1" style={{color:'rgba(255,255,255,0.7)'}}>วันที่อยู่ด้วยกัน</div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="animate-heartbeat text-lg">💕</div>
+                        <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full"
+                          style={{background: userProfile?.streakCount > 0 ? 'rgba(249,115,22,0.9)' : 'rgba(255,255,255,0.2)'}}>
+                          <span style={{fontSize:'0.8rem'}}>🔥</span>
+                          <span className="text-xs font-black text-white">
+                            {userProfile?.streakCount || 0}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-xs font-bold text-gray-400 mt-1">วันที่อยู่ด้วยกัน</div>
-                  </div>
-                  <Link to={`/profile/${userProfile?.partnerId}`}>
-                    <AvatarBubble profile={partnerProfile} label="คู่รัก" ringFrom="#1da0bc" ringTo="#6366f1"/>
-                  </Link>
-                </div>
-                {/* Heart + streak row */}
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="animate-heartbeat text-xl">💕</div>
-                  <div className="flex items-center gap-1 px-3 py-1 rounded-full"
-                    style={{background: userProfile?.streakCount > 0 ? '#fff7ed' : '#f3f4f6'}}>
-                    <span style={{fontSize:'0.9rem'}}>🔥</span>
-                    <span className="text-xs font-black"
-                      style={{color: userProfile?.streakCount > 0 ? '#ea580c' : '#9ca3af'}}>
-                      {userProfile?.streakCount || 0}
-                    </span>
+                    <Link to={`/profile/${userProfile?.partnerId}`}>
+                      <AvatarBubble profile={partnerProfile} label="คู่รัก" ringFrom="#fff" ringTo="#e0e7ff" size={15}/>
+                    </Link>
                   </div>
                 </div>
-                {/* Quote */}
-                <p className="font-display italic text-gray-400 text-xs leading-relaxed mb-4">"{quote}"</p>
-                {/* Buttons */}
-                <div className="flex gap-2">
-                  <Link to={`/profile/${userProfile?.partnerId}`}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl font-bold text-sm"
-                    style={{background:'#fff0f3', color:'#e8637a'}}>
-                    👤 โปรไฟล์
-                  </Link>
-                  <Link to="/chat"
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl font-bold text-sm text-white"
-                    style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)'}}>
-                    <FiMessageCircle size={15}/> แชท
-                  </Link>
+                {/* White bottom section */}
+                <div className="bg-white px-5 py-4">
+                  <p className="font-display italic text-center text-gray-400 text-xs leading-relaxed mb-3">"{quote}"</p>
+                  <div className="flex gap-2">
+                    <Link to={`/profile/${userProfile?.partnerId}`}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl font-bold text-sm"
+                      style={{background:'#fff0f3', color:'#e8637a'}}>
+                      👤 โปรไฟล์
+                    </Link>
+                    <Link to="/chat"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl font-bold text-sm text-white"
+                      style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)'}}>
+                      <FiMessageCircle size={15}/> แชท
+                    </Link>
+                  </div>
                 </div>
               </div>
             ) : !isLocal ? (

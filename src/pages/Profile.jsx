@@ -54,11 +54,12 @@ export default function Profile() {
         {/* Top card */}
         <div className="card overflow-hidden mb-4" style={{boxShadow:'0 8px 40px rgba(244,63,94,.12)'}}>
           {/* Gradient header */}
-          <div className="relative pt-10 pb-20 px-6 text-center"
+          <div className="relative pt-12 pb-20 px-6 text-center"
             style={{background:'linear-gradient(135deg,#f43f5e,#c026d3,#7c3aed)'}}>
-            {/* Decorative dots */}
-            <div className="absolute top-4 right-6 w-20 h-20 rounded-full opacity-10" style={{background:'white'}}/>
-            <div className="absolute top-8 right-12 w-8 h-8 rounded-full opacity-10" style={{background:'white'}}/>
+            {/* Decorative circles */}
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full" style={{background:'rgba(255,255,255,0.07)',transform:'translate(30%,-30%)'}}/>
+            <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full" style={{background:'rgba(255,255,255,0.06)'}}/>
+            <div className="absolute top-6 left-8 w-8 h-8 rounded-full" style={{background:'rgba(255,255,255,0.08)'}}/>
           </div>
 
           {/* Avatar — overlaps gradient */}
@@ -94,13 +95,15 @@ export default function Profile() {
 
             {/* Stats row */}
             {days !== null && days >= 0 && (
-              <div className="flex justify-center gap-4 mb-5">
-                <div className="text-center px-5 py-3 rounded-2xl" style={{background:'#fff1f3'}}>
-                  <p className="font-display font-bold text-3xl text-gradient leading-none">{days}</p>
-                  <p className="text-xs text-rose-400 font-bold uppercase tracking-wider mt-0.5">วันด้วยกัน</p>
+              <div className="flex justify-center gap-3 mb-5">
+                <div className="text-center px-6 py-3.5 rounded-2xl flex-1"
+                  style={{background:'linear-gradient(135deg,#fff1f3,#ffe4e9)',border:'1px solid rgba(244,63,94,0.12)',boxShadow:'0 2px 12px rgba(244,63,94,0.08)'}}>
+                  <p className="font-display font-bold text-4xl text-gradient leading-none">{days}</p>
+                  <p className="text-xs text-rose-400 font-bold uppercase tracking-wider mt-1">วันด้วยกัน</p>
                 </div>
                 {userProfile?.relationshipStart && (
-                  <div className="text-center px-5 py-3 rounded-2xl" style={{background:'#f3e8ff'}}>
+                  <div className="text-center px-6 py-3.5 rounded-2xl flex-1"
+                    style={{background:'linear-gradient(135deg,#f3e8ff,#ede9fe)',border:'1px solid rgba(168,85,247,0.12)',boxShadow:'0 2px 12px rgba(168,85,247,0.08)'}}>
                     <p className="font-bold text-purple-500 text-base mt-1">
                       {new Date(userProfile.relationshipStart).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'})}
                     </p>
