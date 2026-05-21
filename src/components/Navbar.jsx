@@ -13,17 +13,18 @@ export default function Navbar() {
   const pendingCount = isLocal ? 0 : incomingRequests.length;
 
   const NAV_LINKS = [
-    { to: '/dashboard', label: 'หน้าหลัก' },
+    { to: '/dashboard',    label: 'หน้าหลัก' },
+    { to: '/chat',         label: 'แชท' },
     { to: '/find-partner', label: 'คู่รัก', badge: pendingCount },
-    { to: '/profile', label: 'โปรไฟล์' },
+    { to: '/profile',      label: 'โปรไฟล์' },
   ];
 
   return (
-    <nav className="glass-white sticky top-0 z-50">
+    /* hidden on mobile — BottomNav takes over */
+    <nav className="glass-white sticky top-0 z-50 hidden md:block">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
 
-        {/* Logo */}
-        <Link to="/dashboard" className="group hover:opacity-90 transition-opacity">
+        <Link to="/dashboard" className="hover:opacity-90 transition-opacity">
           <MissUNavLogo dark={true}/>
         </Link>
 
@@ -34,9 +35,7 @@ export default function Navbar() {
                 className={`relative px-3.5 py-1.5 rounded-xl text-sm font-semibold transition-all ${
                   active === to ? 'text-white' : 'text-slate-500 hover:text-slate-700'
                 }`}
-                style={active === to
-                  ? {background:'linear-gradient(135deg,#e8637a,#1da0bc)', color:'white'}
-                  : {}}>
+                style={active === to ? {background:'linear-gradient(135deg,#e8637a,#1da0bc)'} : {}}>
                 {label}
                 {badge > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-white flex items-center justify-center font-bold"
