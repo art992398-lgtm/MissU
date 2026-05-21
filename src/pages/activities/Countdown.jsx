@@ -4,30 +4,8 @@ import Navbar from '../../components/Navbar';
 import PageHeader from '../../components/PageHeader';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { FiClock, FiPlus, FiX, FiTrash2, FiCalendar } from 'react-icons/fi';
-
-function Modal({ show, onClose, title, children }) {
-  if (!show) return null;
-  return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
-      <div className="animate-slide-up" style={{
-        position: 'relative', width: '100%', maxWidth: 520,
-        background: 'white', borderRadius: '28px 28px 0 0',
-        padding: '24px 24px max(24px,env(safe-area-inset-bottom))',
-        maxHeight: '90vh', overflowY: 'auto',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>{title}</h3>
-          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: '50%', background: '#f3f4f6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
-            <FiX size={16} />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
+import BottomSheet from '../../components/BottomSheet';
+import { FiClock, FiPlus, FiTrash2, FiCalendar } from 'react-icons/fi';
 
 export default function Countdown() {
   const { currentUser, userProfile, partnerProfile } = useAuth();
@@ -161,7 +139,7 @@ export default function Countdown() {
         <FiPlus size={24} />
       </button>
 
-      <Modal show={showModal} onClose={() => setShowModal(false)} title="เพิ่มวันสำคัญ">
+      <BottomSheet show={showModal} onClose={() => setShowModal(false)} title="เพิ่มวันสำคัญ">
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="input-label">ชื่อวันสำคัญ</label>
@@ -180,7 +158,7 @@ export default function Countdown() {
             เพิ่มวันสำคัญ
           </button>
         </form>
-      </Modal>
+      </BottomSheet>
     </div>
   );
 }

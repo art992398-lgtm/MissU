@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import BottomSheet from '../../components/BottomSheet';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { FiMail, FiEdit3, FiX, FiChevronDown, FiArrowLeft } from 'react-icons/fi';
@@ -15,41 +16,26 @@ function WriteModal({ show, onClose, onSend, loading }) {
     onSend(title, text, () => { setTitle(''); setText(''); });
   }
 
-  if (!show) return null;
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
-      <div className="animate-slide-up" style={{
-        position: 'relative', width: '100%', maxWidth: 520,
-        background: 'white', borderRadius: '28px 28px 0 0',
-        padding: '24px 24px max(24px,env(safe-area-inset-bottom))',
-        maxHeight: '90vh', overflowY: 'auto',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>เขียนจดหมายรัก</h3>
-          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: '50%', background: '#f3f4f6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
-            <FiX size={16} />
-          </button>
+    <BottomSheet show={show} onClose={onClose} title="เขียนจดหมายรัก">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="input-label">หัวเรื่อง</label>
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="ถึงคนที่รัก..."
+            className="input-love" />
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="input-label">หัวเรื่อง</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="ถึงคนที่รัก..."
-              className="input-love" />
-          </div>
-          <div>
-            <label className="input-label">เนื้อหา</label>
-            <textarea value={text} onChange={e => setText(e.target.value)}
-              placeholder="เขียนจากใจ..." required
-              className="input-love resize-none h-36" style={{ resize: 'none' }} />
-          </div>
-          <button type="submit" disabled={loading || !text.trim()} className="btn-love w-full py-3.5 flex items-center justify-center gap-2">
-            <FiMail size={16} />
-            {loading ? 'กำลังส่ง...' : 'ส่งจดหมาย'}
-          </button>
-        </form>
-      </div>
-    </div>
+        <div>
+          <label className="input-label">เนื้อหา</label>
+          <textarea value={text} onChange={e => setText(e.target.value)}
+            placeholder="เขียนจากใจ..." required
+            className="input-love resize-none h-36" style={{ resize: 'none' }} />
+        </div>
+        <button type="submit" disabled={loading || !text.trim()} className="btn-love w-full py-3.5 flex items-center justify-center gap-2">
+          <FiMail size={16} />
+          {loading ? 'กำลังส่ง...' : 'ส่งจดหมาย'}
+        </button>
+      </form>
+    </BottomSheet>
   );
 }
 

@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar';
 import PageHeader from '../../components/PageHeader';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import BottomSheet from '../../components/BottomSheet';
 import { FiCamera, FiPlus, FiX, FiImage, FiTrash2, FiHeart, FiThumbsUp, FiSmile, FiMessageCircle, FiSend, FiZoomIn } from 'react-icons/fi';
 
 /* ── Lightbox ── */
@@ -52,29 +53,6 @@ async function uploadToImgBB(file) {
   const json = await res.json();
   if (!json.success) throw new Error(json.error?.message || 'Upload failed');
   return json.data.url;
-}
-
-function Modal({ show, onClose, title, children }) {
-  if (!show) return null;
-  return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
-      <div className="animate-slide-up" style={{
-        position: 'relative', width: '100%', maxWidth: 520,
-        background: 'white', borderRadius: '28px 28px 0 0',
-        padding: '24px 24px max(24px,env(safe-area-inset-bottom))',
-        maxHeight: '90vh', overflowY: 'auto',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>{title}</h3>
-          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: '50%', background: '#f3f4f6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
-            <FiX size={16} />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
 }
 
 /* ── Memory Detail Modal ── */
@@ -137,7 +115,7 @@ function MemoryDetailModal({ memory, onClose, coupleId, currentUser, userProfile
   if (!memory) return null;
 
   return (
-    <Modal show={!!memory} onClose={onClose} title="ความทรงจำ">
+    <BottomSheet show={!!memory} onClose={onClose} title="ความทรงจำ">
       <div className="space-y-4">
         {/* Image */}
         {memory.imageUrl && (
@@ -246,7 +224,7 @@ function MemoryDetailModal({ memory, onClose, coupleId, currentUser, userProfile
           </form>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 }
 
@@ -403,7 +381,7 @@ export default function MemoryWall() {
         <FiPlus size={24} />
       </button>
 
-      <Modal show={showForm} onClose={() => { setShowForm(false); clearImage(); }} title="เพิ่มความทรงจำ">
+      <BottomSheet show={showForm} onClose={() => { setShowForm(false); clearImage(); }} title="เพิ่มความทรงจำ">
         <form onSubmit={addMemory} className="space-y-4">
           <div>
             <label className="input-label">หัวเรื่อง</label>
@@ -451,7 +429,7 @@ export default function MemoryWall() {
             {uploading ? 'กำลังอัปโหลด...' : 'บันทึกความทรงจำ'}
           </button>
         </form>
-      </Modal>
+      </BottomSheet>
 
       {/* Memory Detail Modal */}
       <MemoryDetailModal
