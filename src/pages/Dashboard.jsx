@@ -26,6 +26,13 @@ const QUOTES = [
   'ขอบคุณที่อยู่เคียงข้างกันเสมอ',
   'คุณคือเหตุผลที่ฉันยิ้มทุกวัน',
   'ทุกนาทีกับคุณ มีค่ายิ่งกว่าสิ่งใด',
+  'ห่างกันแค่ไหน หัวใจยังอยู่ใกล้',
+  'รักแท้ไม่ได้วัดด้วยระยะทาง แต่วัดด้วยใจ',
+  'การมีคุณอยู่ข้างๆ คือความสุขที่แท้จริง',
+  'คุณทำให้โลกใบนี้สวยงามขึ้นมาก',
+  'พรุ่งนี้จะดีกว่า เพราะยังมีคุณ',
+  'ขอบคุณที่เป็นแรงบันดาลใจให้กันและกัน',
+  'ทุกช่วงเวลาที่มีเธอ คือความทรงจำที่ดีที่สุด',
 ];
 
 function AvatarBubble({ profile, label, ringFrom, ringTo, size = 16 }) {
@@ -54,7 +61,7 @@ function AvatarBubble({ profile, label, ringFrom, ringTo, size = 16 }) {
 }
 
 /* ── Desktop couple sidebar ── */
-function CoupleSidebar({ userProfile, partnerProfile, isLocal, days, quote }) {
+function CoupleSidebar({ userProfile, partnerProfile, isLocal, days, quote, quoteFade }) {
   return (
     <div className="hidden md:flex flex-col gap-4 w-72 flex-shrink-0">
       {/* Couple card */}
@@ -84,7 +91,8 @@ function CoupleSidebar({ userProfile, partnerProfile, isLocal, days, quote }) {
               </div>
               <AvatarBubble profile={partnerProfile} label="คู่รัก" ringFrom="#1da0bc" ringTo="#6366f1" size={20}/>
             </div>
-            <p className="font-display italic text-gray-400 text-sm leading-relaxed">
+            <p className="font-display italic text-gray-400 text-sm leading-relaxed"
+              style={{transition:'opacity 0.4s ease', opacity: quoteFade ? 1 : 0}}>
               "{quote}"
             </p>
             <div className="flex gap-2 mt-4">
@@ -170,7 +178,6 @@ export default function Dashboard() {
   const days = userProfile?.relationshipStart
     ? Math.floor((Date.now() - new Date(userProfile.relationshipStart)) / 86400000) : null;
   const hasPartner = isLocal || !!userProfile?.partnerId;
-  const quote = QUOTES[new Date().getDay() % QUOTES.length];
   const coupleId = currentUser && userProfile?.partnerId
     ? [currentUser.uid, userProfile.partnerId].sort().join('_') : null;
 
@@ -180,6 +187,19 @@ export default function Dashboard() {
     const q = query(collection(db, 'couples', coupleId, 'memories'), orderBy('createdAt','desc'), limit(6));
     return onSnapshot(q, snap => setMemories(snap.docs.map(d => ({ id:d.id, ...d.data() }))));
   }, [coupleId]);
+
+  const [quoteIdx, setQuoteIdx] = useState(() => Math.floor(Math.random() * QUOTES.length));
+  const [quoteFade, setQuoteFade] = useState(true);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setQuoteFade(false);
+      setTimeout(() => {
+        setQuoteIdx(i => (i + 1) % QUOTES.length);
+        setQuoteFade(true);
+      }, 400);
+    }, 5000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <div className="min-h-screen" style={{background:'#fafafa'}}>
@@ -203,7 +223,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Main layout ── */}
-      <div className="max-w-6xl mx-auto px-5 pt-5 pb-32 md:pb-12 md:flex md:gap-6">
+      <div className="max-w-6xl mx-auto px-5 pt-6 pb-36 md:pb-12 md:flex md:gap-8">
 
         {/* Desktop sidebar */}
         <CoupleSidebar
@@ -211,7 +231,8 @@ export default function Dashboard() {
           partnerProfile={partnerProfile}
           isLocal={isLocal}
           days={days}
-          quote={quote}
+          quote={QUOTES[quoteIdx]}
+          quoteFade={quoteFade}
         />
 
         {/* Main content */}
@@ -255,7 +276,10 @@ export default function Dashboard() {
                 </div>
                 {/* White bottom section */}
                 <div className="bg-white px-5 py-4">
-                  <p className="font-display italic text-center text-gray-400 text-xs leading-relaxed mb-3">"{quote}"</p>
+                  <p className="font-display italic text-center text-gray-400 text-xs leading-relaxed mb-3"
+                    style={{transition:'opacity 0.4s ease', opacity: quoteFade ? 1 : 0}}>
+                    "{QUOTES[quoteIdx]}"
+                  </p>
                   <div className="flex gap-2">
                     <Link to={`/profile/${userProfile?.partnerId}`}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-2xl font-bold text-sm"
@@ -288,10 +312,10 @@ export default function Dashboard() {
           </div>
 
           {/* ── Mobile: story circles ── */}
-          <div className="md:hidden bg-white rounded-3xl p-4 mb-5"
+          <div className="md:hidden bg-white rounded-3xl p-5 mb-6"
             style={{boxShadow:'0 4px 16px rgba(0,0,0,0.06)'}}>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-1">กิจกรรมของเรา</p>
-            <div className="flex gap-5 overflow-x-auto pb-1 hide-scrollbar">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-5 px-1">กิจกรรมของเรา</p>
+            <div className="flex gap-6 overflow-x-auto pb-1 hide-scrollbar">
               {ACTIVITIES.map(a => <StoryCircle key={a.id} a={a} hasPartner={hasPartner}/>)}
             </div>
           </div>
@@ -306,7 +330,7 @@ export default function Dashboard() {
 
           {/* ── Memories preview ── */}
           {memories.length > 0 && (
-            <div className="mt-8">
+            <div className="mt-10">
               <div className="flex items-center justify-between mb-3">
                 <p className="font-bold text-gray-600 text-sm">ความทรงจำล่าสุด</p>
                 <Link to="/activity/memory-wall"

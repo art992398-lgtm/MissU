@@ -44,7 +44,7 @@ export default function BottomSheet({ show, onClose, title, children }) {
           maxWidth: 520,
           background: 'white',
           borderRadius: '28px 28px 0 0',
-          padding: '24px 24px max(24px,env(safe-area-inset-bottom))',
+          padding: '20px 24px max(32px,env(safe-area-inset-bottom))',
           maxHeight: '90vh',
           overflowY: 'auto',
           // ขยับขึ้นตาม keyboard
@@ -57,7 +57,7 @@ export default function BottomSheet({ show, onClose, title, children }) {
           <div style={{ width: 40, height: 4, borderRadius: 99, background: '#e5e7eb' }} />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#111827' }}>{title}</h3>
           <button
             onClick={onClose}

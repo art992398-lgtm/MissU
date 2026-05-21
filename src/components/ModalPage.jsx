@@ -61,7 +61,7 @@ export default function ModalPage({ title, subtitle, from, to, bg, children, act
         </div>
 
         {/* Scrollable content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px max(24px,env(safe-area-inset-bottom))' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 20px max(32px,env(safe-area-inset-bottom))' }}>
           {children}
         </div>
       </div>

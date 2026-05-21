@@ -235,6 +235,14 @@ body {
   clip-path: ellipse(55% 100% at 50% 100%);
 }
 
+/* ── Global form spacing: activity forms feel more breathable ── */
+.input-love, .input {
+  padding: .85rem 1.1rem;
+}
+.input-label {
+  margin-bottom: .5rem;
+}
+
 /* ── Divider ── */
 .divider {
   display:flex; align-items:center; gap:.75rem; color:#b0c4cf; font-size:.8rem; font-weight:600;
