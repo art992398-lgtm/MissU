@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import { collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
@@ -70,11 +69,8 @@ export default function DateWheel() {
   const conicStr = SEGMENT_COLORS.map((c,i)=>`${c} ${i*seg}deg ${(i+1)*seg}deg`).join(',');
 
   return (
-    <div className="min-h-screen" style={{background:'linear-gradient(160deg,#fff1f3,#fce7f3,#f3e8ff)'}}>
-      <Navbar />
-      <PageHeader emoji="🎲" title="วงล้อเดท" subtitle="สปินเพื่อรับไอเดียเดทสุดพิเศษ!" grad="from-pink-400 to-rose-500" />
-
-      <div className="max-w-lg mx-auto px-4 -mt-6 pb-28 md:pb-12">
+    <ModalPage title="วงล้อเดท" subtitle="สปินเพื่อรับไอเดียเดทสุดพิเศษ!" from="#ec4899" to="#f472b6" bg="linear-gradient(160deg,#fff1f3,#fce7f3,#f3e8ff)">
+      <div>
         <div className="card-love p-6 text-center mb-5 shadow-xl">
           <div className="relative inline-block mb-6">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-20 text-3xl drop-shadow-lg">🔻</div>
@@ -136,6 +132,6 @@ export default function DateWheel() {
           </div>
         )}
       </div>
-    </div>
+    </ModalPage>
   );
 }

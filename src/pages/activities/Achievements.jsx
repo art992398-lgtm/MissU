@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
@@ -60,11 +59,8 @@ export default function Achievements() {
   const pct = Math.round((unlocked.length/ACHIEVEMENTS.length)*100);
 
   return (
-    <div className="min-h-screen" style={{background:'linear-gradient(160deg,#fffbeb,#fef3c7,#fff7ed)'}}>
-      <Navbar />
-      <PageHeader emoji="🏆" title="ความสำเร็จ" subtitle="ปลดล็อกความสำเร็จร่วมกัน" grad="from-amber-400 to-yellow-500" />
-
-      <div className="max-w-2xl mx-auto px-4 -mt-6 pb-28 md:pb-12">
+    <ModalPage title="ความสำเร็จ" subtitle="ปลดล็อกความสำเร็จร่วมกัน" from="#eab308" to="#f97316" bg="linear-gradient(160deg,#fffbeb,#fef3c7,#fff7ed)">
+      <div>
         <div className="card-love p-5 text-center mb-5 shadow-xl">
           <div className="font-display font-bold text-5xl text-gradient-gold mb-1">{unlocked.length}/{ACHIEVEMENTS.length}</div>
           <p className="text-gray-400 text-sm font-semibold mb-3">ปลดล็อคแล้ว</p>
@@ -112,6 +108,6 @@ export default function Achievements() {
           </div>
         )}
       </div>
-    </div>
+    </ModalPage>
   );
 }

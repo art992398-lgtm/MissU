@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
@@ -69,11 +68,8 @@ export default function LoveQuiz() {
   const progress = (current / QUESTIONS.length) * 100;
 
   return (
-    <div className="min-h-screen" style={{background:'linear-gradient(160deg,#eff6ff,#e0e7ff,#f3e8ff)'}}>
-      <Navbar />
-      <PageHeader emoji="❓" title="รู้จักกันดีแค่ไหน" subtitle="ทดสอบว่าเข้าใจกันมากแค่ไหน" grad="from-blue-400 to-indigo-500" />
-
-      <div className="max-w-lg mx-auto px-4 -mt-6 pb-28 md:pb-12">
+    <ModalPage title="รู้จักกันดีแค่ไหน" subtitle="ทดสอบว่าเข้าใจกันมากแค่ไหน" from="#6366f1" to="#818cf8" bg="linear-gradient(160deg,#eff6ff,#e0e7ff,#f3e8ff)">
+      <div>
         {mode==='menu' && (
           <div className="card-love p-8 text-center animate-fade-up shadow-xl">
             <div className="text-6xl mb-4 animate-bounce-gentle">❓</div>
@@ -164,6 +160,6 @@ export default function LoveQuiz() {
           </div>
         )}
       </div>
-    </div>
+    </ModalPage>
   );
 }

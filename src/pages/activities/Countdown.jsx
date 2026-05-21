@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
+import BottomSheet from '../../components/BottomSheet';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import BottomSheet from '../../components/BottomSheet';
 import { FiClock, FiPlus, FiTrash2, FiCalendar } from 'react-icons/fi';
 
 export default function Countdown() {
@@ -69,75 +68,70 @@ export default function Countdown() {
   const relDays = userProfile?.relationshipStart
     ? Math.floor((now - new Date(userProfile.relationshipStart)) / 86400000) : null;
 
+  const fab = (
+    <button onClick={() => setShowModal(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <FiPlus size={18} />
+    </button>
+  );
+
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg,#faf5ff,#f3e8ff,#fce7f3)' }}>
-      <Navbar />
-      <PageHeader icon={FiClock} title="นับวัน" subtitle="ทุกวันมีความหมาย" from="#7c3aed" to="#a855f7" />
-
-      <div className="max-w-2xl mx-auto px-4 -mt-6 pb-28 md:pb-12">
-        {relDays !== null && (
-          <div className="rounded-3xl p-7 text-center text-white mb-5 relative overflow-hidden shadow-xl"
-            style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7,#ec4899)' }}>
-            <div className="absolute inset-0 opacity-10 flex items-center justify-center pointer-events-none">
-              <FiClock size={160} color="white" />
+    <ModalPage title="นับวัน" subtitle="ทุกวันมีความหมาย" from="#7c3aed" to="#a855f7" bg="linear-gradient(160deg,#faf5ff,#f3e8ff,#fce7f3)" actionBtn={fab}>
+      <div>
+          {relDays !== null && (
+            <div className="rounded-3xl p-7 text-center text-white mb-5 relative overflow-hidden shadow-xl"
+              style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7,#ec4899)' }}>
+              <div className="absolute inset-0 opacity-10 flex items-center justify-center pointer-events-none">
+                <FiClock size={160} color="white" />
+              </div>
+              <p className="text-white/60 text-sm uppercase tracking-widest font-bold mb-1">เราอยู่ด้วยกันมา</p>
+              <p className="font-display font-bold text-8xl leading-none">{relDays}</p>
+              <p className="text-white/60 text-sm uppercase tracking-widest font-bold mt-1">วัน</p>
             </div>
-            <p className="text-white/60 text-sm uppercase tracking-widest font-bold mb-1">เราอยู่ด้วยกันมา</p>
-            <p className="font-display font-bold text-8xl leading-none">{relDays}</p>
-            <p className="text-white/60 text-sm uppercase tracking-widest font-bold mt-1">วัน</p>
-          </div>
-        )}
-
-        {events.length === 0 ? (
-          <div className="text-center py-16">
-            <FiCalendar size={56} color="#ddd6fe" style={{ margin: '0 auto 12px' }} />
-            <p className="font-display italic text-xl text-gray-300">เพิ่มวันสำคัญของคุณ!</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {events.map(ev => {
-              const d = getDiff(ev.date);
-              return (
-                <div key={ev.id} className="card-love p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <FiCalendar size={16} color="#8b5cf6" />
-                      <h4 className="font-bold text-gray-800">{ev.name}</h4>
+          )}
+          {events.length === 0 ? (
+            <div className="text-center py-16">
+              <FiCalendar size={56} color="#ddd6fe" style={{ margin: '0 auto 12px' }} />
+              <p className="font-display italic text-xl text-gray-300">เพิ่มวันสำคัญของคุณ!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {events.map(ev => {
+                const d = getDiff(ev.date);
+                return (
+                  <div key={ev.id} className="card-love p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <FiCalendar size={16} color="#8b5cf6" />
+                        <h4 className="font-bold text-gray-800">{ev.name}</h4>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">{new Date(ev.date).toLocaleDateString('th-TH')}</span>
+                        <button onClick={() => handleRemove(ev.id)} className="text-gray-200 hover:text-rose-400 transition-colors">
+                          <FiTrash2 size={14} />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400">{new Date(ev.date).toLocaleDateString('th-TH')}</span>
-                      <button onClick={() => handleRemove(ev.id)} className="text-gray-200 hover:text-rose-400 transition-colors">
-                        <FiTrash2 size={14} />
-                      </button>
-                    </div>
+                    {d.past ? (
+                      <div className="text-center py-3">
+                        <span className="text-purple-400 font-display italic text-xl">ผ่านมาแล้ว {d.days} วัน</span>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-4 gap-3">
+                        {[{ v: d.days, l: 'วัน' }, { v: d.hours, l: 'ชั่วโมง' }, { v: d.mins, l: 'นาที' }, { v: d.secs, l: 'วินาที' }].map(({ v, l }) => (
+                          <div key={l} className="text-center rounded-2xl py-3"
+                            style={{ background: 'linear-gradient(135deg,#f3e8ff,#ede9fe)' }}>
+                            <p className="font-display font-bold text-3xl text-purple-600 leading-none">{String(v).padStart(2, '0')}</p>
+                            <p className="text-xs text-purple-400 mt-1 font-semibold">{l}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {d.past ? (
-                    <div className="text-center py-3">
-                      <span className="text-purple-400 font-display italic text-xl">ผ่านมาแล้ว {d.days} วัน</span>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-4 gap-3">
-                      {[{ v: d.days, l: 'วัน' }, { v: d.hours, l: 'ชั่วโมง' }, { v: d.mins, l: 'นาที' }, { v: d.secs, l: 'วินาที' }].map(({ v, l }) => (
-                        <div key={l} className="text-center rounded-2xl py-3"
-                          style={{ background: 'linear-gradient(135deg,#f3e8ff,#ede9fe)' }}>
-                          <p className="font-display font-bold text-3xl text-purple-600 leading-none">{String(v).padStart(2, '0')}</p>
-                          <p className="text-xs text-purple-400 mt-1 font-semibold">{l}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
       </div>
-
-      {/* FAB */}
-      <button onClick={() => setShowModal(true)}
-        className="fixed bottom-24 right-5 md:bottom-8 w-14 h-14 rounded-full text-white flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-90"
-        style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7)', zIndex: 40 }}>
-        <FiPlus size={24} />
-      </button>
 
       <BottomSheet show={showModal} onClose={() => setShowModal(false)} title="เพิ่มวันสำคัญ">
         <form onSubmit={handleAdd} className="space-y-4">
@@ -159,6 +153,6 @@ export default function Countdown() {
           </button>
         </form>
       </BottomSheet>
-    </div>
+    </ModalPage>
   );
 }

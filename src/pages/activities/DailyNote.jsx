@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import { collection, setDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { FiEdit3, FiHeart, FiStar, FiSmile, FiSun, FiWind, FiMoon, FiSave, FiEdit } from 'react-icons/fi';
@@ -110,11 +109,8 @@ export default function DailyNote() {
   const showForm = !todayNote || editing;
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg,#fefce8,#fff7ed,#fff1f3)' }}>
-      <Navbar />
-      <PageHeader icon={FiEdit3} title="โน้ตรายวัน" subtitle="บอกความรู้สึกทุกวัน" from="#f59e0b" to="#ef4444" />
-
-      <div className="max-w-lg mx-auto px-4 -mt-6 pb-28 md:pb-12">
+    <ModalPage title="โน้ตรายวัน" subtitle="บอกความรู้สึกทุกวัน" from="#f97316" to="#f59e0b" bg="linear-gradient(160deg,#fefce8,#fff7ed,#fff1f3)">
+      <div>
 
         {/* Today card */}
         <div className="card-love p-6 mb-5 shadow-xl">
@@ -235,6 +231,6 @@ export default function DailyNote() {
           </div>
         )}
       </div>
-    </div>
+    </ModalPage>
   );
 }

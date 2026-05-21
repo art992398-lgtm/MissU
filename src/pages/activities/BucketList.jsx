@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import BottomSheet from '../../components/BottomSheet';
 import { collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -72,12 +71,15 @@ export default function BucketList() {
   const done = items.filter(i => i.done).length;
   const pct = items.length ? (done / items.length) * 100 : 0;
 
-  return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg,#fff7ed,#fef3c7,#fff1f3)' }}>
-      <Navbar />
-      <PageHeader icon={FiCheckSquare} title="Bucket List คู่รัก" subtitle="สิ่งที่อยากทำด้วยกันในชีวิตนี้" from="#f97316" to="#f59e0b" />
+  const fab = (
+    <button onClick={() => setShowModal(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <FiPlus size={18} />
+    </button>
+  );
 
-      <div className="max-w-2xl mx-auto px-4 -mt-6 pb-28 md:pb-12">
+  return (
+    <ModalPage title="Bucket List คู่รัก" subtitle="สิ่งที่อยากทำด้วยกันในชีวิตนี้" from="#f97316" to="#fb923c" bg="linear-gradient(160deg,#fff7ed,#fef3c7,#fff1f3)" actionBtn={fab}>
+      <div>
         {items.length > 0 && (
           <div className="card-love p-5 text-center mb-5 shadow-xl">
             <div className="flex items-center justify-center gap-4 mb-3">
@@ -145,13 +147,6 @@ export default function BucketList() {
         )}
       </div>
 
-      {/* FAB */}
-      <button onClick={() => setShowModal(true)}
-        className="fixed bottom-24 right-5 md:bottom-8 w-14 h-14 rounded-full text-white flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-90"
-        style={{ background: 'linear-gradient(135deg,#f97316,#f59e0b)', zIndex: 40 }}>
-        <FiPlus size={24} />
-      </button>
-
       <BottomSheet show={showModal} onClose={() => setShowModal(false)} title="เพิ่มสิ่งที่อยากทำ">
         <div className="space-y-4">
           <div>
@@ -183,6 +178,6 @@ export default function BucketList() {
           </div>
         </div>
       </BottomSheet>
-    </div>
+    </ModalPage>
   );
 }

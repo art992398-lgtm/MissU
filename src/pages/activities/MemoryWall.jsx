@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import PageHeader from '../../components/PageHeader';
+import ModalPage from '../../components/ModalPage';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import BottomSheet from '../../components/BottomSheet';
@@ -309,12 +308,15 @@ export default function MemoryWall() {
     return Object.values(memory.reactions).reduce((sum, r) => sum + (r.count || 0), 0);
   }
 
-  return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg,#ecfdf5,#d1fae5,#e0f2fe)' }}>
-      <Navbar />
-      <PageHeader icon={FiCamera} title="กำแพงความทรงจำ" subtitle="เก็บทุกช่วงเวลาที่ดีไว้ตลอดกาล" from="#14b8a6" to="#06b6d4" />
+  const fab = (
+    <button onClick={() => setShowForm(true)} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <FiPlus size={18} />
+    </button>
+  );
 
-      <div className="max-w-2xl mx-auto px-4 -mt-6 pb-28 md:pb-12">
+  return (
+    <ModalPage title="กำแพงความทรงจำ" subtitle="เก็บทุกช่วงเวลาที่ดีไว้ตลอดกาล" from="#14b8a6" to="#06b6d4" bg="linear-gradient(160deg,#ecfdf5,#d1fae5,#e0f2fe)" actionBtn={fab}>
+      <div>
         {memories.length === 0 && !showForm && (
           <div className="text-center py-20">
             <FiCamera size={56} color="#a7f3d0" style={{ margin: '0 auto 12px' }} />
@@ -373,13 +375,6 @@ export default function MemoryWall() {
           })}
         </div>
       </div>
-
-      {/* FAB */}
-      <button onClick={() => setShowForm(true)}
-        className="fixed bottom-24 right-5 md:bottom-8 w-14 h-14 rounded-full text-white flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-90"
-        style={{ background: 'linear-gradient(135deg,#14b8a6,#06b6d4)', zIndex: 40 }}>
-        <FiPlus size={24} />
-      </button>
 
       <BottomSheet show={showForm} onClose={() => { setShowForm(false); clearImage(); }} title="เพิ่มความทรงจำ">
         <form onSubmit={addMemory} className="space-y-4">
@@ -443,6 +438,6 @@ export default function MemoryWall() {
 
       {/* Lightbox */}
       <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
-    </div>
+    </ModalPage>
   );
 }
