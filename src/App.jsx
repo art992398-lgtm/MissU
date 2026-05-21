@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import BottomNav from './components/BottomNav';
@@ -34,11 +34,18 @@ function ActivityWrapper() {
   return <Component />;
 }
 
-// BottomNav is shown globally for authenticated users on mobile
 function AuthenticatedBottomNav() {
   const { currentUser } = useAuth();
-  if (!currentUser) return null;
-  return <BottomNav/>;
+  const location = useLocation();
+  // Hide on chat page (it has its own full-screen layout)
+  if (!currentUser || location.pathname === '/chat') return null;
+  return (
+    <>
+      <BottomNav/>
+      {/* Spacer so page content isn't hidden behind the fixed bottom nav on mobile */}
+      <div className="md:hidden" style={{height:72}}/>
+    </>
+  );
 }
 
 function App() {
