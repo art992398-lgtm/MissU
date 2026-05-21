@@ -255,13 +255,21 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    const unsub = onAuthStateChanged(auth, async (user) => {
+    let unsubProfile = null;
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      if (user) await loadUserProfile(user.uid);
-      else setUserProfile(null);
-      setLoading(false);
+      if (unsubProfile) { unsubProfile(); unsubProfile = null; }
+      if (user) {
+        unsubProfile = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+          if (snap.exists()) setUserProfile(snap.data());
+          setLoading(false);
+        });
+      } else {
+        setUserProfile(null);
+        setLoading(false);
+      }
     });
-    return unsub;
+    return () => { unsubAuth(); if (unsubProfile) unsubProfile(); };
   }, []);
 
   const value = {
