@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../../components/Navbar';
 import PageHeader from '../../components/PageHeader';
+import { collection, onSnapshot, query } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 const ACHIEVEMENTS = [
   { id:'first_day',    emoji:'🌟', title:'จุดเริ่มต้น',      desc:'วันแรกของความรัก',                check:d=>!!d.relationshipStart },
@@ -21,31 +24,39 @@ const ACHIEVEMENTS = [
   { id:'quiz_done',    emoji:'🧠', title:'รู้จักกันดี',        desc:'เล่นควิซรู้จักกัน',               check:d=>d.quizDone>0 },
 ];
 
-function getStats(uid, isLocal) {
-  const pfx = isLocal ? '' : `_${uid}`;
-  const letters  = JSON.parse(localStorage.getItem('missu_letters')||'[]');
-  const memories = JSON.parse(localStorage.getItem(`missu_memories${pfx}`)||'[]');
-  const bucket   = JSON.parse(localStorage.getItem(`missu_bucketlist${pfx}`)||'[]');
-  const notes    = JSON.parse(localStorage.getItem(`missu_dailynotes${pfx}`)||'[]');
-  return {
-    letterCount:  letters.length,
-    memoryCount:  memories.length,
-    bucketCount:  bucket.length,
-    bucketDone:   bucket.filter(b=>b.done).length,
-    noteCount:    notes.length,
-    dateSpun:     parseInt(localStorage.getItem('missu_date_spun')||'0'),
-    quizDone:     localStorage.getItem('missu_quiz_answers') ? 1 : 0,
-  };
-}
-
 export default function Achievements() {
-  const { currentUser, userProfile, isLocal } = useAuth();
-  const stats = getStats(currentUser?.uid, isLocal);
+  const { currentUser, userProfile } = useAuth();
+  const coupleId = currentUser && userProfile?.partnerId
+    ? [currentUser.uid, userProfile.partnerId].sort().join('_') : null;
+
+  const [stats, setStats] = useState({
+    letterCount: 0, memoryCount: 0, bucketCount: 0,
+    bucketDone: 0, noteCount: 0, dateSpun: 0, quizDone: 0,
+  });
+
+  useEffect(() => {
+    if (!coupleId) return;
+    const unsubs = [];
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'letters')),
+      snap => setStats(s => ({ ...s, letterCount: snap.size }))));
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'memories')),
+      snap => setStats(s => ({ ...s, memoryCount: snap.size }))));
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'bucketItems')),
+      snap => setStats(s => ({ ...s, bucketCount: snap.size, bucketDone: snap.docs.filter(d=>d.data().done).length }))));
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'dailyNotes')),
+      snap => setStats(s => ({ ...s, noteCount: snap.docs.filter(d=>d.data().authorId===currentUser.uid).length }))));
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'dateHistory')),
+      snap => setStats(s => ({ ...s, dateSpun: snap.size }))));
+    unsubs.push(onSnapshot(query(collection(db, 'couples', coupleId, 'quiz')),
+      snap => setStats(s => ({ ...s, quizDone: snap.docs.some(d=>d.id===currentUser.uid) ? 1 : 0 }))));
+    return () => unsubs.forEach(u => u());
+  }, [coupleId]);
+
   const days = userProfile?.relationshipStart
     ? Math.floor((new Date() - new Date(userProfile.relationshipStart))/86400000) : 0;
-  const data = { ...stats, days, relationshipStart:userProfile?.relationshipStart, bio:userProfile?.bio };
-  const unlocked = ACHIEVEMENTS.filter(a=>a.check(data));
-  const locked   = ACHIEVEMENTS.filter(a=>!a.check(data));
+  const data = { ...stats, days, relationshipStart: userProfile?.relationshipStart, bio: userProfile?.bio };
+  const unlocked = ACHIEVEMENTS.filter(a => a.check(data));
+  const locked = ACHIEVEMENTS.filter(a => !a.check(data));
   const pct = Math.round((unlocked.length/ACHIEVEMENTS.length)*100);
 
   return (
@@ -54,7 +65,6 @@ export default function Achievements() {
       <PageHeader emoji="🏆" title="ความสำเร็จ" subtitle="ปลดล็อกความสำเร็จร่วมกัน" grad="from-amber-400 to-yellow-500" />
 
       <div className="max-w-2xl mx-auto px-4 -mt-6 pb-10">
-        {/* Progress */}
         <div className="card-love p-5 text-center mb-5 shadow-xl">
           <div className="font-display font-bold text-5xl text-gradient-gold mb-1">{unlocked.length}/{ACHIEVEMENTS.length}</div>
           <p className="text-gray-400 text-sm font-semibold mb-3">ปลดล็อคแล้ว</p>
@@ -65,7 +75,6 @@ export default function Achievements() {
           <p className="text-xs text-amber-400 font-bold mt-2">{pct}%</p>
         </div>
 
-        {/* Unlocked */}
         {unlocked.length > 0 && (
           <div className="mb-6">
             <h3 className="font-bold text-gray-600 mb-3 flex items-center gap-2">
@@ -85,7 +94,6 @@ export default function Achievements() {
           </div>
         )}
 
-        {/* Locked */}
         {locked.length > 0 && (
           <div>
             <h3 className="font-bold text-gray-300 mb-3 flex items-center gap-2">
