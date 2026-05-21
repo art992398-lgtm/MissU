@@ -147,6 +147,23 @@ export default function Chat() {
   const chatId = currentUser && userProfile?.partnerId
     ? [currentUser.uid, userProfile.partnerId].sort().join('_') : null;
 
+  /* Fix: set --vh to visual viewport height so keyboard doesn't cover input */
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      document.documentElement.style.setProperty('--vh', `${vv.height}px`);
+    };
+    update();
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+      document.documentElement.style.removeProperty('--vh');
+    };
+  }, []);
+
   useEffect(() => {
     if (!chatId) { setLoadingMsgs(false); return; }
     const q = query(ref(rtdb, `chats/${chatId}/messages`), limitToLast(100));
@@ -251,7 +268,7 @@ export default function Chat() {
   });
 
   return (
-    <div style={{height:'100dvh', display:'flex', flexDirection:'column', background:'var(--bg)'}}>
+    <div style={{height:'var(--vh,100dvh)', display:'flex', flexDirection:'column', background:'var(--bg)', overflow:'hidden'}}>
 
       {/* Header */}
       <div className="glass-white flex-shrink-0 flex items-center gap-3 px-4"
@@ -260,13 +277,13 @@ export default function Chat() {
           <BackIcon/>
         </Link>
         {partnerProfile ? (
-          <>
+          <Link to={`/profile/${userProfile.partnerId}`} className="flex items-center gap-3 flex-1 min-w-0">
             <Avatar user={partnerProfile} size={10}/>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-slate-800 text-sm truncate">{partnerProfile.displayName}</p>
               <p className="text-xs text-teal-500 font-semibold">คู่รักของคุณ 💕</p>
             </div>
-          </>
+          </Link>
         ) : (
           <div className="flex-1"><p className="font-bold text-slate-800 text-sm">กำลังโหลด...</p></div>
         )}
