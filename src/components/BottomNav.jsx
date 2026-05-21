@@ -59,7 +59,7 @@ export default function BottomNav() {
         paddingBottom: 'env(safe-area-inset-bottom)',
         boxShadow: '0 -4px 24px rgba(0,0,0,0.06)',
       }}>
-      <div className="flex items-center justify-around px-1 py-1">
+      <div className="flex items-center justify-around px-2 py-1.5">
         {TABS.map(({ to, label, Icon, badge, locked }) => {
           const isActive = active === to;
           const dim = locked;
@@ -67,21 +67,24 @@ export default function BottomNav() {
             <Link
               key={label}
               to={locked ? '/find-partner' : to}
-              className="flex flex-col items-center gap-0.5 flex-1 py-2 px-1 rounded-2xl transition-all"
+              className="flex flex-col items-center gap-1 flex-1 py-2.5 px-2 rounded-2xl transition-all active:scale-95"
               style={isActive ? {background:'linear-gradient(135deg,#e8637a,#1da0bc)'} : {}}>
               <div className="relative">
                 <Icon active={isActive}/>
                 {badge > 0 && (
                   <span
-                    className="absolute -top-1 -right-1.5 w-4 h-4 rounded-full text-white flex items-center justify-center font-bold"
-                    style={{fontSize:'0.55rem', background:'#e8637a'}}>
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-white flex items-center justify-center font-black"
+                    style={{fontSize:'0.6rem', background:'#e8637a'}}>
                     {badge > 9 ? '9+' : badge}
                   </span>
                 )}
               </div>
               <span
-                className="text-xs font-semibold leading-none"
-                style={{color: isActive ? 'white' : dim ? '#c8d9e2' : '#6b8a99'}}>
+                className="font-bold leading-none"
+                style={{
+                  fontSize:'0.7rem',
+                  color: isActive ? 'white' : dim ? '#c8d9e2' : '#5a7a8a',
+                }}>
                 {label}
               </span>
             </Link>
