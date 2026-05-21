@@ -1,0 +1,18 @@
+{
+  "name": "MissU - Connect & Cherish",
+  "short_name": "MissU",
+  "description": "พื้นที่พิเศษสำหรับสองคน",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1f2b",
+  "theme_color": "#e8637a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
