@@ -12,6 +12,7 @@ import LoveQuiz from './pages/activities/LoveQuiz';
 import DateWheel from './pages/activities/DateWheel';
 import DailyNote from './pages/activities/DailyNote';
 import Achievements from './pages/activities/Achievements';
+import FindPartner from './pages/FindPartner';
 
 const ACTIVITY_MAP = {
   'love-letters': LoveLetters,
@@ -39,6 +40,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/find-partner" element={<ProtectedRoute><FindPartner /></ProtectedRoute>} />
           <Route path="/activity/:id" element={<ProtectedRoute><ActivityWrapper /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
