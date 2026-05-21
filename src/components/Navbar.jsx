@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { MissUNavLogo } from './MissULogo';
+import { FiLogOut } from 'react-icons/fi';
 
 export default function Navbar() {
   const { currentUser, userProfile, logout, incomingRequests, isLocal } = useAuth();
@@ -61,7 +62,10 @@ export default function Navbar() {
                 style={{fontSize:'0.92rem'}}>
                 {userProfile?.displayName}
               </span>
-              <button onClick={handleLogout} className="btn-ghost" style={{fontSize:'0.85rem'}}>
+              <button onClick={handleLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all font-semibold"
+                style={{fontSize:'0.85rem'}}>
+                <FiLogOut size={14} strokeWidth={2.5}/>
                 ออก
               </button>
             </div>
