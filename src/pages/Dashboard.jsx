@@ -3,160 +3,63 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import {
   FiMail, FiClock, FiCheckSquare, FiCamera,
-  FiHelpCircle, FiRefreshCw, FiEdit3, FiAward,
+  FiHelpCircle, FiRefreshCw, FiEdit3, FiAward, FiMessageCircle,
 } from 'react-icons/fi';
 
 const ACTIVITIES = [
-  { id:'love-letters', Icon:FiMail,        title:'จดหมายรัก',        desc:'เขียนความรู้สึกให้กัน',   from:'#e8637a', to:'#f472b6' },
-  { id:'countdown',    Icon:FiClock,       title:'นับวัน',            desc:'นับวันพิเศษของเรา',         from:'#8b5cf6', to:'#a78bfa' },
-  { id:'bucket-list',  Icon:FiCheckSquare, title:'Bucket List',       desc:'สิ่งที่อยากทำด้วยกัน',     from:'#f97316', to:'#fbbf24' },
-  { id:'memory-wall',  Icon:FiCamera,      title:'ความทรงจำ',         desc:'เก็บทุกช่วงเวลาดีๆ',        from:'#14b8a6', to:'#1da0bc' },
-  { id:'love-quiz',    Icon:FiHelpCircle,  title:'รู้จักกันดีแค่ไหน', desc:'ทดสอบความเข้าใจกัน',      from:'#6366f1', to:'#818cf8' },
-  { id:'date-wheel',   Icon:FiRefreshCw,   title:'วงล้อเดท',          desc:'สปินหาไอเดียเดท',          from:'#ec4899', to:'#e8637a' },
-  { id:'daily-note',   Icon:FiEdit3,       title:'โน้ตรายวัน',        desc:'บอกความรู้สึกทุกวัน',       from:'#f59e0b', to:'#ef4444' },
-  { id:'achievements', Icon:FiAward,       title:'ความสำเร็จ',        desc:'ปลดล็อกความทรงจำ',          from:'#eab308', to:'#f97316' },
+  { id:'love-letters', Icon:FiMail,        title:'จดหมายรัก',        from:'#e8637a', to:'#f472b6' },
+  { id:'countdown',    Icon:FiClock,       title:'นับวัน',            from:'#8b5cf6', to:'#a78bfa' },
+  { id:'bucket-list',  Icon:FiCheckSquare, title:'Bucket List',       from:'#f97316', to:'#fbbf24' },
+  { id:'memory-wall',  Icon:FiCamera,      title:'ความทรงจำ',         from:'#14b8a6', to:'#1da0bc' },
+  { id:'love-quiz',    Icon:FiHelpCircle,  title:'รู้จักกันดีแค่ไหน', from:'#6366f1', to:'#818cf8' },
+  { id:'date-wheel',   Icon:FiRefreshCw,   title:'วงล้อเดท',          from:'#ec4899', to:'#e8637a' },
+  { id:'daily-note',   Icon:FiEdit3,       title:'โน้ตรายวัน',        from:'#f59e0b', to:'#ef4444' },
+  { id:'achievements', Icon:FiAward,       title:'ความสำเร็จ',        from:'#eab308', to:'#f97316' },
 ];
 
-const QUOTES = [
-  'ทุกวันที่มีคุณ คือวันที่ดีที่สุด',
-  'รักคุณมากกว่าที่คำพูดจะอธิบายได้',
-  'ขอบคุณที่อยู่เคียงข้างกันเสมอ',
-  'คุณคือเหตุผลที่ฉันยิ้มทุกวัน',
-  'ทุกนาทีกับคุณ มีค่ายิ่งกว่าสิ่งใด',
-];
-
-const LockIcon = () => (
-  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-    <rect x="3" y="11" width="18" height="11" rx="2"/>
-    <path strokeLinecap="round" d="M7 11V7a5 5 0 0110 0v4"/>
-  </svg>
-);
-
-function ActivityCard({ a, hasPartner }) {
+function StoryCircle({ a, hasPartner }) {
   const { Icon } = a;
-  const content = (
-    <div className="card card-hover group overflow-hidden h-full flex flex-col">
-      {/* Icon area with gradient bg */}
-      <div className="relative flex items-center justify-center py-6 overflow-hidden"
-        style={{background:`linear-gradient(135deg,${a.from}15,${a.to}28)`}}>
-        <div className="absolute inset-0 opacity-15"
-          style={{background:`radial-gradient(circle at 50% 70%,${a.to},transparent 65%)`}}/>
-
-        {/* Icon circle */}
-        <div className="relative z-10 w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
-          style={{
-            background:`linear-gradient(135deg,${a.from},${a.to})`,
-            boxShadow:`0 8px 24px ${a.from}45`,
-          }}>
-          <Icon size={28} strokeWidth={1.8} color="white"/>
+  return (
+    <Link
+      to={hasPartner ? `/activity/${a.id}` : '/find-partner'}
+      className="flex flex-col items-center gap-1.5 flex-shrink-0 active:scale-90 transition-transform">
+      <div
+        className="p-[3px] rounded-full"
+        style={{background: hasPartner ? `linear-gradient(135deg,${a.from},${a.to})` : '#e5e7eb'}}>
+        <div className="w-[58px] h-[58px] rounded-full bg-white flex items-center justify-center"
+          style={{border:'2px solid white'}}>
+          <Icon size={22} strokeWidth={1.8} color={hasPartner ? a.from : '#d1d5db'}/>
         </div>
+      </div>
+      <span
+        className="text-center leading-tight font-semibold"
+        style={{fontSize:'0.62rem', color: hasPartner ? '#374151' : '#9ca3af', width:68, display:'block'}}>
+        {a.title}
+      </span>
+    </Link>
+  );
+}
 
-        {!hasPartner && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-t-[20px]"
-            style={{background:'rgba(255,255,255,.75)', backdropFilter:'blur(2px)'}}>
-            <div className="flex flex-col items-center gap-1">
-              <LockIcon/>
-              <span className="text-xs font-bold text-slate-400">ต้องการคู่รัก</span>
-            </div>
+function AvatarBubble({ profile, label, ringFrom, ringTo }) {
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="p-[3px] rounded-full"
+        style={{background:`linear-gradient(135deg,${ringFrom},${ringTo})`}}>
+        {profile?.photoURL ? (
+          <img src={profile.photoURL} alt=""
+            className="w-16 h-16 rounded-full object-cover block"
+            style={{border:'2.5px solid white'}}/>
+        ) : (
+          <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
+            style={{background:'#fff', border:'2.5px solid white'}}>
+            {profile?.avatarEmoji || '💕'}
           </div>
         )}
       </div>
-
-      {/* Color accent bar */}
-      <div className="h-[3px]" style={{background:`linear-gradient(90deg,${a.from},${a.to})`}}/>
-
-      {/* Text */}
-      <div className="p-4 flex-1 flex flex-col items-center justify-center text-center">
-        <h3 className="font-bold text-slate-800 leading-snug mb-1" style={{fontSize:'0.9rem'}}>
-          {a.title}
-        </h3>
-        <p className="text-slate-400 leading-snug" style={{fontSize:'0.78rem'}}>
-          {a.desc}
-        </p>
-      </div>
+      <span className="font-semibold text-gray-600 text-xs truncate" style={{maxWidth:72, textAlign:'center'}}>
+        {profile?.displayName || label}
+      </span>
     </div>
-  );
-
-  if (hasPartner) {
-    return <Link to={`/activity/${a.id}`} className="block h-full">{content}</Link>;
-  }
-  return <Link to="/find-partner" className="block h-full">{content}</Link>;
-}
-
-function PartnerSection({ partnerProfile, userProfile, isLocal }) {
-  if (isLocal) return null;
-
-  if (!partnerProfile) {
-    return (
-      <Link to="/find-partner"
-        className="flex items-center gap-4 p-5 rounded-2xl mb-6 transition-all hover:scale-[1.01] active:scale-[0.99]"
-        style={{
-          background:'linear-gradient(135deg,rgba(232,99,122,.06),rgba(29,160,188,.06))',
-          border:'1.5px solid rgba(232,99,122,.25)',
-          boxShadow:'0 4px 20px rgba(232,99,122,.08)',
-        }}>
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
-          style={{background:'linear-gradient(135deg,rgba(232,99,122,.15),rgba(232,99,122,.08))'}}>
-          💕
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-bold text-slate-700" style={{fontSize:'0.95rem'}}>
-            เชื่อมต่อกับคู่รักของคุณ
-          </p>
-          <p className="text-slate-400 mt-0.5" style={{fontSize:'0.82rem'}}>
-            ค้นหาและเชื่อมต่อเพื่อทำกิจกรรมร่วมกัน
-          </p>
-        </div>
-        <div className="flex-shrink-0 px-5 py-2.5 rounded-2xl text-white font-bold text-sm"
-          style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)',boxShadow:'0 4px 12px rgba(232,99,122,.3)'}}>
-          เชื่อมต่อ
-        </div>
-      </Link>
-    );
-  }
-
-  return (
-    <Link to="/chat"
-      className="flex items-center gap-4 p-5 rounded-3xl mb-6 transition-all hover:scale-[1.01] active:scale-[0.99]"
-      style={{
-        background:'white',
-        border:'1px solid rgba(29,160,188,.15)',
-        boxShadow:'0 4px 20px rgba(29,160,188,.08)',
-      }}>
-      {/* My avatar */}
-      {userProfile?.photoURL ? (
-        <img src={userProfile.photoURL} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-          style={{boxShadow:'0 0 0 2px #fff, 0 0 0 4px rgba(232,99,122,.3)'}}/>
-      ) : (
-        <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-          style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)',boxShadow:'0 0 0 2px #fff, 0 0 0 4px rgba(232,99,122,.25)'}}>
-          {userProfile?.avatarEmoji || '💕'}
-        </div>
-      )}
-
-      <div className="flex-1 min-w-0 text-center px-2">
-        <div className="text-2xl animate-heartbeat">💕</div>
-      </div>
-
-      {/* Partner avatar */}
-      {partnerProfile.photoURL ? (
-        <img src={partnerProfile.photoURL} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-          style={{boxShadow:'0 0 0 2px #fff, 0 0 0 4px rgba(29,160,188,.3)'}}/>
-      ) : (
-        <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-          style={{background:'linear-gradient(135deg,#1da0bc,#e8637a)',boxShadow:'0 0 0 2px #fff, 0 0 0 4px rgba(29,160,188,.25)'}}>
-          {partnerProfile.avatarEmoji || '💕'}
-        </div>
-      )}
-
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">คู่รักของฉัน</p>
-        <p className="font-bold text-slate-700 truncate" style={{fontSize:'1rem'}}>
-          {partnerProfile.displayName}
-        </p>
-        <p className="text-xs text-teal-500 font-semibold">แตะเพื่อแชท →</p>
-      </div>
-    </Link>
   );
 }
 
@@ -164,139 +67,106 @@ export default function Dashboard() {
   const { userProfile, partnerProfile, isLocal } = useAuth();
   const days = userProfile?.relationshipStart
     ? Math.floor((Date.now() - new Date(userProfile.relationshipStart)) / 86400000) : null;
-  const quote = QUOTES[new Date().getDay() % QUOTES.length];
   const hasPartner = isLocal || !!userProfile?.partnerId;
 
   return (
-    <div className="min-h-screen" style={{background:'var(--bg)'}}>
+    <div className="min-h-screen" style={{background:'#fafafa'}}>
       <Navbar/>
 
-      {/* ── Hero ── */}
-      <div style={{
-        background:'linear-gradient(135deg, #e8637a 0%, #1da0bc 100%)',
-        padding:'2.5rem 1.5rem 4rem',
-        position:'relative',
-        overflow:'hidden',
-      }}>
-        {/* Decorative blobs */}
-        <div className="absolute pointer-events-none"
-          style={{top:-40,right:-40,width:180,height:180,borderRadius:'50%',background:'rgba(255,255,255,.06)'}}/>
-        <div className="absolute pointer-events-none"
-          style={{bottom:-20,left:-20,width:120,height:120,borderRadius:'50%',background:'rgba(255,255,255,.06)'}}/>
-
-        {/* Cutout bottom */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none"
-          style={{height:32,background:'var(--bg)',clipPath:'ellipse(55% 100% at 50% 100%)'}}/>
-
-        {/* Mobile: max-w-sm | Desktop: max-w-2xl */}
-        <div className="max-w-sm md:max-w-2xl mx-auto relative z-10">
-
-          {/* ── 3-column symmetric: Me | Days | Partner ── */}
-          <div className="grid grid-cols-3 items-center gap-4 md:gap-10">
-
-            {/* Left — Me */}
-            <div className="flex flex-col items-center gap-2">
-              {userProfile?.photoURL ? (
-                <img src={userProfile.photoURL} alt=""
-                  className="w-14 h-14 md:w-20 md:h-20 rounded-full object-cover"
-                  style={{boxShadow:'0 0 0 3px rgba(255,255,255,.45)'}}/>
-              ) : (
-                <div className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center text-2xl md:text-3xl"
-                  style={{background:'rgba(255,255,255,.2)',boxShadow:'0 0 0 3px rgba(255,255,255,.35)'}}>
-                  {userProfile?.avatarEmoji || '💕'}
-                </div>
-              )}
-              <div className="text-center">
-                <p className="text-white/50 font-bold uppercase tracking-wider text-[0.55rem] md:text-[0.65rem]">ฉัน</p>
-                <p className="font-bold text-white leading-tight text-[0.78rem] md:text-sm" style={{wordBreak:'break-word'}}>
-                  {userProfile?.displayName || 'ที่รัก'}
-                </p>
-              </div>
-            </div>
-
-            {/* Center — Days */}
-            <div className="flex flex-col items-center">
-              <div className="text-center px-3 py-3 md:px-6 md:py-4 rounded-2xl w-full"
-                style={{background:'rgba(255,255,255,.18)',backdropFilter:'blur(12px)'}}>
-                <p className="text-white/65 font-bold uppercase tracking-wider text-[0.55rem] md:text-[0.65rem]">อยู่ด้วยกัน</p>
-                <p className="font-black text-white leading-none my-0.5 text-[2.6rem] md:text-[3.5rem]"
-                  style={{fontFamily:"'Nunito',sans-serif"}}>
-                  {days !== null && days >= 0 ? days : '—'}
-                </p>
-                <p className="text-white/65 font-bold text-[0.65rem] md:text-[0.75rem]">วัน</p>
-              </div>
-            </div>
-
-            {/* Right — Partner */}
-            {partnerProfile ? (
-              <div className="flex flex-col items-center gap-2">
-                {partnerProfile.photoURL ? (
-                  <img src={partnerProfile.photoURL} alt=""
-                    className="w-14 h-14 md:w-20 md:h-20 rounded-full object-cover"
-                    style={{boxShadow:'0 0 0 3px rgba(255,255,255,.45)'}}/>
-                ) : (
-                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center text-2xl md:text-3xl"
-                    style={{background:'rgba(255,255,255,.2)',boxShadow:'0 0 0 3px rgba(255,255,255,.35)'}}>
-                    {partnerProfile.avatarEmoji || '💕'}
-                  </div>
-                )}
-                <div className="text-center">
-                  <p className="text-white/50 font-bold uppercase tracking-wider text-[0.55rem] md:text-[0.65rem]">คู่รัก</p>
-                  <p className="font-bold text-white leading-tight text-[0.78rem] md:text-sm" style={{wordBreak:'break-word'}}>
-                    {partnerProfile.displayName}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center text-xl md:text-2xl"
-                  style={{background:'rgba(255,255,255,.08)',border:'2px dashed rgba(255,255,255,.35)'}}>
-                  💕
-                </div>
-                <div className="text-center">
-                  <p className="text-white/40 font-bold uppercase tracking-wider text-[0.55rem] md:text-[0.65rem]">คู่รัก</p>
-                  <p className="text-white/40 font-semibold text-[0.72rem] md:text-sm">ยังไม่มี</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Quote */}
-          <p className="font-display italic text-white/60 mt-5 text-center text-sm md:text-base">
-            "{quote}"
-          </p>
-        </div>
+      {/* Mobile-only sticky top bar */}
+      <div
+        className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12"
+        style={{
+          background:'rgba(255,255,255,0.97)',
+          backdropFilter:'blur(16px)',
+          WebkitBackdropFilter:'blur(16px)',
+          borderBottom:'1px solid #f0f0f0',
+        }}>
+        <span className="font-display font-bold text-xl text-gradient">MissU</span>
+        <Link
+          to="/chat"
+          className="w-9 h-9 flex items-center justify-center rounded-full"
+          style={{background:'#fff0f3'}}>
+          <FiMessageCircle size={20} color="#e8637a" strokeWidth={2}/>
+        </Link>
       </div>
 
-      {/* ── Content ── */}
-      <div className="max-w-4xl mx-auto px-5 -mt-5 pb-32 md:pb-12">
+      <div className="max-w-4xl mx-auto px-5 pt-5 pb-32 md:pb-12">
 
-        {/* Partner section */}
-        <PartnerSection
-          partnerProfile={partnerProfile}
-          userProfile={userProfile}
-          isLocal={isLocal}
-        />
+        {/* ── Couple header ── */}
+        {(hasPartner && (partnerProfile || isLocal)) ? (
+          <div className="flex items-center justify-between bg-white rounded-3xl p-5 mb-5"
+            style={{boxShadow:'0 2px 16px rgba(0,0,0,0.05)', border:'1px solid #f5f5f5'}}>
+            <AvatarBubble
+              profile={userProfile}
+              label="ฉัน"
+              ringFrom="#e8637a"
+              ringTo="#f472b6"
+            />
+            <div className="flex flex-col items-center flex-1">
+              <div className="font-black leading-none text-gradient"
+                style={{fontSize:'clamp(2.5rem,8vw,3.5rem)', fontFamily:"'Nunito',sans-serif"}}>
+                {days !== null && days >= 0 ? days : '—'}
+              </div>
+              <div className="text-xs font-bold text-gray-400 mt-1">วันที่อยู่ด้วยกัน</div>
+              <div className="animate-heartbeat text-base mt-1.5">💕</div>
+            </div>
+            <AvatarBubble
+              profile={partnerProfile}
+              label="คู่รัก"
+              ringFrom="#1da0bc"
+              ringTo="#6366f1"
+            />
+          </div>
+        ) : !isLocal ? (
+          <Link
+            to="/find-partner"
+            className="flex items-center gap-3 bg-white p-4 rounded-2xl mb-5 transition-all active:scale-[0.99]"
+            style={{border:'1.5px dashed rgba(232,99,122,.3)', boxShadow:'0 2px 12px rgba(232,99,122,.05)'}}>
+            <div className="text-3xl">💕</div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-gray-700 text-sm">เชื่อมต่อกับคู่รักของคุณ</p>
+              <p className="text-gray-400 text-xs mt-0.5">ทำกิจกรรมร่วมกันได้เลย</p>
+            </div>
+            <span className="text-xs font-bold px-3 py-1.5 rounded-full text-white flex-shrink-0"
+              style={{background:'linear-gradient(135deg,#e8637a,#1da0bc)'}}>
+              เชื่อมต่อ
+            </span>
+          </Link>
+        ) : null}
 
-        {/* Section title */}
-        <div className="flex items-center justify-between mb-4 mt-2">
-          <h2 className="font-bold text-slate-700" style={{fontSize:'1.1rem'}}>
-            กิจกรรมของเรา
-          </h2>
-          {!hasPartner && (
-            <span className="badge badge-rose">ต้องการคู่รัก</span>
-          )}
+        {/* ── Story highlight circles ── */}
+        <div className="bg-white rounded-3xl p-4 mb-5"
+          style={{boxShadow:'0 2px 16px rgba(0,0,0,0.05)', border:'1px solid #f5f5f5'}}>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-1">กิจกรรมของเรา</p>
+          <div className="flex gap-5 overflow-x-auto pb-1 hide-scrollbar">
+            {ACTIVITIES.map(a => (
+              <StoryCircle key={a.id} a={a} hasPartner={hasPartner}/>
+            ))}
+          </div>
         </div>
 
-        {/* 2×4 Grid */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {ACTIVITIES.map(a => (
-            <ActivityCard key={a.id} a={a} hasPartner={hasPartner}/>
-          ))}
+        {/* ── Activity grid (desktop 4-col, mobile 2-col) ── */}
+        <div className="hidden md:grid grid-cols-4 gap-3">
+          {ACTIVITIES.map(a => {
+            const { Icon } = a;
+            return (
+              <Link
+                key={a.id}
+                to={hasPartner ? `/activity/${a.id}` : '/find-partner'}
+                className="bg-white rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
+                style={{border:'1px solid #f0f0f0'}}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{background:`linear-gradient(135deg,${a.from},${a.to})`, boxShadow:`0 4px 12px ${a.from}40`}}>
+                  <Icon size={22} strokeWidth={1.8} color="white"/>
+                </div>
+                <span className="font-bold text-gray-700 text-sm text-center leading-tight">{a.title}</span>
+              </Link>
+            );
+          })}
         </div>
 
-        <p className="text-center mt-8 font-display italic"
-          style={{color:'#c8d9e2', fontSize:'0.82rem'}}>
+        <p className="text-center mt-8 font-display italic text-xs" style={{color:'#d1b3c0'}}>
           Made with 💕 for you two
         </p>
       </div>
