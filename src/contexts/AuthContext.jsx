@@ -8,7 +8,11 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import {
+  doc, setDoc, getDoc, updateDoc,
+  collection, query, where, onSnapshot,
+  addDoc, getDocs, serverTimestamp, limit,
+} from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../firebase/config';
 
@@ -21,6 +25,8 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+  const [partnerProfile, setPartnerProfile] = useState(null);
+  const [incomingRequests, setIncomingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLocal, setIsLocal] = useState(false);
 
@@ -92,6 +98,7 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('missu_local_user');
       setCurrentUser(null);
       setUserProfile(null);
+      setPartnerProfile(null);
       setIsLocal(false);
     } else {
       await signOut(auth);
@@ -103,6 +110,11 @@ export function AuthProvider({ children }) {
     if (snap.exists()) {
       setUserProfile(snap.data());
     }
+  }
+
+  async function loadPartnerProfile(uid) {
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (snap.exists()) setPartnerProfile(snap.data());
   }
 
   async function updateUserProfile(uid, data) {
@@ -132,6 +144,95 @@ export function AuthProvider({ children }) {
     setUserProfile(newProfile);
   }
 
+  // ── Partner system ──────────────────────────────────────────────
+
+  async function searchUsers(nameQuery) {
+    if (!nameQuery.trim() || !currentUser) return [];
+    const q = query(
+      collection(db, 'users'),
+      where('displayName', '>=', nameQuery),
+      where('displayName', '<=', nameQuery + '\uf8ff'),
+      limit(10)
+    );
+    const snap = await getDocs(q);
+    return snap.docs
+      .map(d => d.data())
+      .filter(u => u.uid !== currentUser.uid);
+  }
+
+  async function sendPartnerRequest(toUser) {
+    if (!currentUser || !userProfile) return;
+    // prevent duplicate
+    const q = query(
+      collection(db, 'partnerRequests'),
+      where('fromUid', '==', currentUser.uid),
+      where('toUid', '==', toUser.uid),
+      where('status', '==', 'pending')
+    );
+    const existing = await getDocs(q);
+    if (!existing.empty) return 'already_sent';
+    await addDoc(collection(db, 'partnerRequests'), {
+      fromUid: currentUser.uid,
+      fromName: userProfile.displayName,
+      fromEmoji: userProfile.avatarEmoji || '💕',
+      fromPhoto: userProfile.photoURL || null,
+      toUid: toUser.uid,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+    });
+    return 'sent';
+  }
+
+  async function acceptPartnerRequest(req) {
+    await updateDoc(doc(db, 'partnerRequests', req.id), { status: 'accepted' });
+    await updateDoc(doc(db, 'users', currentUser.uid), { partnerId: req.fromUid });
+    await updateDoc(doc(db, 'users', req.fromUid), { partnerId: currentUser.uid });
+    setUserProfile(prev => ({ ...prev, partnerId: req.fromUid }));
+    await loadPartnerProfile(req.fromUid);
+  }
+
+  async function declinePartnerRequest(requestId) {
+    await updateDoc(doc(db, 'partnerRequests', requestId), { status: 'declined' });
+  }
+
+  async function removePartner() {
+    if (!userProfile?.partnerId || !currentUser) return;
+    const pid = userProfile.partnerId;
+    await updateDoc(doc(db, 'users', currentUser.uid), { partnerId: null });
+    await updateDoc(doc(db, 'users', pid), { partnerId: null });
+    setUserProfile(prev => ({ ...prev, partnerId: null }));
+    setPartnerProfile(null);
+  }
+
+  // ── Effects ─────────────────────────────────────────────────────
+
+  // load partner profile when partnerId changes
+  useEffect(() => {
+    if (userProfile?.partnerId && !isLocal) {
+      loadPartnerProfile(userProfile.partnerId);
+    } else {
+      setPartnerProfile(null);
+    }
+  }, [userProfile?.partnerId, isLocal]);
+
+  // listen to incoming partner requests
+  useEffect(() => {
+    if (!currentUser || isLocal) {
+      setIncomingRequests([]);
+      return;
+    }
+    const q = query(
+      collection(db, 'partnerRequests'),
+      where('toUid', '==', currentUser.uid),
+      where('status', '==', 'pending')
+    );
+    const unsub = onSnapshot(q, snap => {
+      setIncomingRequests(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return unsub;
+  }, [currentUser, isLocal]);
+
+  // bootstrap auth
   useEffect(() => {
     const stored = localStorage.getItem('missu_local_user');
     if (stored) {
@@ -152,10 +253,13 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = {
-    currentUser, userProfile, loading, isLocal,
+    currentUser, userProfile, partnerProfile, incomingRequests,
+    loading, isLocal,
     register, login, loginWithGoogle, logout, loginLocal,
     updateUserProfile, updateLocalProfile,
     uploadProfilePhoto, uploadLocalPhoto,
+    searchUsers, sendPartnerRequest, acceptPartnerRequest,
+    declinePartnerRequest, removePartner,
   };
 
   return (
