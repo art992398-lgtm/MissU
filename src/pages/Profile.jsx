@@ -30,7 +30,7 @@ export default function Profile() {
   async function handleSave(e) {
     e.preventDefault();
     if (isLocal) updateLocalProfile(form);
-    else await updateUserProfile(currentUser.uid, form);
+    else await updateUserProfile(form);
     setSaved(true); setEditing(false);
     setTimeout(()=>setSaved(false), 2500);
   }
@@ -131,13 +131,13 @@ export default function Profile() {
                 </div>
                 <div>
                   <label className="input-label">ชื่อเล่น</label>
-                  <input value={form.displayName} onChange={e=>setForm(f=>({...f,displayName:e.target.value}))} className="input" required/>
+                  <input value={form.displayName} onChange={e=>setForm(f=>({...f,displayName:e.target.value}))} className="input" required maxLength={50}/>
                 </div>
                 <div>
                   <label className="input-label">Bio</label>
                   <textarea value={form.bio} onChange={e=>setForm(f=>({...f,bio:e.target.value}))}
                     placeholder="เขียนอะไรสักอย่างเกี่ยวกับตัวเอง..."
-                    className="input resize-none h-20" style={{resize:'none'}}/>
+                    className="input resize-none h-20" style={{resize:'none'}} maxLength={200}/>
                 </div>
                 <div>
                   <label className="input-label">วันที่เริ่มคบกัน</label>
