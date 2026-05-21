@@ -13,8 +13,25 @@ import {
   collection, query, where, onSnapshot,
   addDoc, getDocs, serverTimestamp, limit,
 } from 'firebase/firestore';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '../firebase/config';
+import { auth, db } from '../firebase/config';
+
+const IMGBB_KEY = import.meta.env.VITE_IMGBB_KEY;
+
+async function uploadToImgBB(file) {
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const body = new FormData();
+  body.append('key', IMGBB_KEY);
+  body.append('image', base64);
+  const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error?.message || 'Upload failed');
+  return json.data.url;
+}
 
 const AuthContext = createContext();
 
@@ -80,10 +97,8 @@ export function AuthProvider({ children }) {
 
   async function uploadProfilePhoto(file) {
     if (!currentUser) return null;
-    const ref = storageRef(storage, `profiles/${currentUser.uid}`);
-    await uploadBytes(ref, file);
-    const url = await getDownloadURL(ref);
-    await updateUserProfile(currentUser.uid, { photoURL: url });
+    const url = await uploadToImgBB(file);
+    await updateUserProfile({ photoURL: url });
     return url;
   }
 
